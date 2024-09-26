@@ -1,4 +1,5 @@
 out/
+build/
 CMakePresets.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,visualstudio,cmake

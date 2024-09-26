@@ -14,7 +14,10 @@ project ("evspace")
 # Add source to this project's executable.
 #add_executable (evspace "evspace.cpp" "evspace.h")
 
-add_subdirectory(src)
+enable_testing()
+
 include_directories(${evspace_SOURCE_DIR}/include)
+add_subdirectory(src)
+add_subdirectory(tests)
 
 # TODO: Add tests and install targets if needed.

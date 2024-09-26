@@ -1,7 +1,9 @@
 #ifndef _EVSPACE_AXIS_H_
 #define _EVSPACE_AXIS_H_
 
-namespace evs {
+#include <evspace_common.hpp>
+
+namespace evspace {
 
     enum class AxisDirection {
         X,
