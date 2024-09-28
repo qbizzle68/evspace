@@ -1,8 +1,9 @@
 #include <vector.hpp>
 #include <matrix.hpp>
 #include<_dot_product.hpp>
-#include <cstddef>      // std::size_t
-#include <stdexcept>    // std::out_of_range
+#include <cstddef>          // std::size_t
+#include <stdexcept>        // std::out_of_range
+#include <cmath>            // std::sqrt, std::acos
 
 #define VECTOR_LENGTH 3
 #define NEW_ARRAY   new double[VECTOR_LENGTH]
@@ -173,7 +174,7 @@ bool evspace::Vector::operator!=(const Vector& rhs) const {
 }
 
 double evspace::Vector::magnitude() const noexcept {
-    return sqrt(_compute_dot_product<Vector>(this->m_data, this->m_data));
+    return std::sqrt(_compute_dot_product<Vector>(this->m_data, this->m_data));
 }
 
 double evspace::Vector::magnitude_squared() const noexcept {
@@ -208,12 +209,12 @@ evspace::Vector evspace::vector_cross(const Vector& lhs, const Vector& rhs) {
 
 double evspace::vector_angle(const Vector& from, const Vector& to) {
     double dot_product = _compute_dot_product<Vector>(from.m_data, to.m_data);
-    double magnitude_product = sqrt(
+    double magnitude_product = std::sqrt(
         _compute_dot_product<Vector>(from.m_data, from.m_data)
         * _compute_dot_product<Vector>(to.m_data, to.m_data)
     );
 
-    return acos(dot_product / magnitude_product);
+    return std::acos(dot_product / magnitude_product);
 }
 
 inline double evspace::Vector::scalar_projection(const Vector& project, const Vector& onto) noexcept {

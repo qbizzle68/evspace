@@ -55,6 +55,12 @@ namespace evspace {
         friend class Matrix;
     };
 
+    double vector_dot(const Vector&, const Vector&) noexcept;
+    Vector vector_cross(const Vector&, const Vector&);
+    double vector_angle(const Vector&, const Vector&);
+    Vector vector_exclude(const Vector&, const Vector&);
+    Vector vector_projection(const Vector&, const Vector&);
+
     EVSPACE_EXPORT Vector operator*(double scalar, const Vector& vector);
 
     EVSPACE_EXPORT extern const Vector e1, e2, e3;
