@@ -57,24 +57,35 @@ const double& evspace::MatrixRow::operator[](std::size_t index) const {
 #define MATRIX_BEGIN(m)         m.m_data
 #define MATRIX_END(m)           m.m_data + MATRIX_ARRAY_LENGTH
 
+// matrix row access proxies
+#define MATRIX_FIRST_ROW(m)     m.m_data
+#define MATRIX_SECOND_ROW(m)    (m.m_data + 3)
+#define MATRIX_THIRD_ROW(m)     (m.m_data + 6)
+
 evspace::Matrix::Matrix() {
     this->m_data = new double[9] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+    this->m_rows = new MatrixRow[3]{
+        MATRIX_FIRST_ROW((*this)),
+        MATRIX_SECOND_ROW((*this)),
+        MATRIX_THIRD_ROW((*this)),
+    };
 }
 
 evspace::Matrix::Matrix(const Matrix& cpy) {
     this->m_data = new double[9];
     std::memcpy(this->m_data, cpy.m_data, MATRIX_SIZE);
-    this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+    this->m_rows = new MatrixRow[3]{
+        MATRIX_FIRST_ROW((*this)),
+        MATRIX_SECOND_ROW((*this)),
+        MATRIX_THIRD_ROW((*this))
+    };
 }
 
 evspace::Matrix::Matrix(Matrix&& move) noexcept {
-    std::swap(this->m_data, move.m_data);
-    std::swap(this->m_rows, move.m_rows);
-    /*this->m_data = move.m_data;
+    this->m_data = move.m_data;
     move.m_data = NULL;
     this->m_rows = move.m_rows;
-    move.m_rows = NULL;*/
+    move.m_rows = NULL;
 }
 
 evspace::Matrix::~Matrix() {
@@ -84,9 +95,9 @@ evspace::Matrix::~Matrix() {
 
 evspace::Matrix& evspace::Matrix::operator=(const Matrix& rhs) {
     std::memcpy(this->m_data, rhs.m_data, MATRIX_SIZE);
-    this->m_rows[0] = rhs.m_rows[0];
-    this->m_rows[1] = rhs.m_rows[1];
-    this->m_rows[2] = rhs.m_rows[2];
+    this->m_rows[0] = MatrixRow(MATRIX_FIRST_ROW((*this)));
+    this->m_rows[1] = MatrixRow(MATRIX_SECOND_ROW((*this)));
+    this->m_rows[2] = MatrixRow(MATRIX_THIRD_ROW((*this)));
 
     return *this;
 }
@@ -139,14 +150,17 @@ evspace::Matrix evspace::Matrix::operator-() const {
         result.m_data[i] = -this->m_data[i];
     }
 
-    return *this;
+    return result;
 }
 
+#include <iostream>
 evspace::Matrix evspace::Matrix::operator-(const Matrix& rhs) const {
     Matrix result = Matrix();
 
     for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
         result.m_data[i] = this->m_data[i] - rhs.m_data[i];
+        std::cout << "subtracting index " << i << "; this at index: " << this->m_data[i]
+            << "; rhs at index: " << rhs.m_data[i] << "; result at index: " << result.m_data[i] << '\n';
     }
 
     return result;

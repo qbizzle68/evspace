@@ -12,12 +12,18 @@ endif()
 project ("evspace")
 
 # Add source to this project's executable.
-#add_executable (evspace "evspace.cpp" "evspace.h")
-
-enable_testing()
-
 include_directories(${evspace_SOURCE_DIR}/include)
 add_subdirectory(src)
-add_subdirectory(tests)
 
 # TODO: Add tests and install targets if needed.
+option(SKIP_TESTING "Skip executing/building resources for all library tests" OFF)
+
+if(NOT SKIP_TESTING)
+    message(STATUS "Buliding with tests")
+    # this has to be here or else it doesn't configure testing
+    enable_testing()
+    add_subdirectory(tests)
+else()
+    message(STATUS "Building without tests")
+endif()
+unset(SKIP_TESTING CACHE)

@@ -185,7 +185,7 @@ evspace::Vector& evspace::Vector::normalize() noexcept {
     return *this /= mag;
 }
 
-evspace::Vector evspace::Vector::vector_norm() const {
+evspace::Vector evspace::Vector::norm() const {
     double mag = this->magnitude();
     return Vector(
         VECTOR_X((*this)) / mag,

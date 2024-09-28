@@ -31,7 +31,7 @@ namespace evspace {
     double _compute_dot_product(double* const row, double* const column) {
         return row[0] * column[0]
             + row[1] * *(column + dphelpers::column_skips<T>())
-            + row[2] + *(column + dphelpers::column_skips<T>());
+            + row[2] * *(column + 2 * dphelpers::column_skips<T>());
     }
 
 }

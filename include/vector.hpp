@@ -44,7 +44,7 @@ namespace evspace {
         double magnitude() const noexcept;
         double magnitude_squared() const noexcept;
         Vector& normalize() noexcept;
-        Vector vector_norm() const;
+        Vector norm() const;
 
         friend double vector_dot(const Vector&, const Vector&) noexcept;
         friend Vector vector_cross(const Vector&, const Vector&);
