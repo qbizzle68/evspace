@@ -13,7 +13,7 @@ namespace evspace {
 
     template<AxisDirection _direction>
     struct Axis {
-        static const AxisDirection direction = _direction;
+        static constexpr AxisDirection direction = _direction;
     };
 
     typedef Axis<AxisDirection::X> XAxis;
