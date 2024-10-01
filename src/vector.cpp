@@ -4,6 +4,8 @@
 #include <cstddef>          // std::size_t
 #include <stdexcept>        // std::out_of_range
 #include <cmath>            // std::sqrt, std::acos
+#include <ostream>          // std::ostream
+#include <cstdio>           // std::sprintf
 
 #define VECTOR_LENGTH 3
 #define NEW_ARRAY   new double[VECTOR_LENGTH]
@@ -69,6 +71,11 @@ const double& evspace::Vector::operator[](std::size_t index) const {
         throw std::out_of_range("Vector index out of range");
     }
     return this->m_data[index];
+}
+
+std::ostream& evspace::operator<<(std::ostream& out, const evspace::Vector& vector) {
+    out << "[ " << vector.m_data[0] << ", " << vector.m_data[1] << ", " << vector.m_data[2] << " ]";
+    return out;
 }
 
 evspace::Vector evspace::Vector::operator+(const Vector& rhs) const {

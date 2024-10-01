@@ -3,10 +3,11 @@
 
 #include <evspace_common.hpp>
 #include <initializer_list>
-#include <cstddef>  // std::size_t
-#include <cstring>  // memcpy
-#include <iterator> // std::data
+#include <cstddef>      // std::size_t
+#include <cstring>      // std::memcpy
+#include <iterator>     // std::data
 #include <algorithm>    // std::copy
+#include <ostream>      // std::ostream
 
 
 #include <iostream>
@@ -51,6 +52,8 @@ namespace evspace {
 
         MatrixRow& operator[](std::size_t);
         const MatrixRow& operator[](std::size_t) const;
+
+        friend std::ostream& operator<<(std::ostream&, const Matrix&);
 
         Matrix operator+(const Matrix&) const;
         Matrix& operator+=(const Matrix&);

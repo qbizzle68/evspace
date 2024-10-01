@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <matrix.hpp>
 #include <evspace_common.hpp>
+#include <ostream>      // std::ostream
 
 namespace evspace {
 
@@ -25,6 +26,8 @@ namespace evspace {
 
         double& operator[](std::size_t);
         const double& operator[](std::size_t) const;
+
+        friend std::ostream& operator<<(std::ostream&, const Vector&);
 
         Vector operator+(const Vector&) const;
         Vector& operator+=(const Vector&);
@@ -62,6 +65,7 @@ namespace evspace {
     Vector vector_projection(const Vector&, const Vector&);
 
     EVSPACE_EXPORT Vector operator*(double scalar, const Vector& vector);
+    EVSPACE_EXPORT std::ostream& operator<<(std::ostream&, const Vector&);
 
     EVSPACE_EXPORT extern const Vector e1, e2, e3;
 

@@ -7,6 +7,7 @@
 
 #include <vector.hpp>
 #include <matrix.hpp>
+#include <sstream>      // std::stringstream
 
 using namespace evspace;
 
@@ -106,6 +107,15 @@ TEST_F(MatrixUnitTest, TestMoveAssignment) {
     Matrix matrix_move = std::move(matrix);
 
     COMPARE_MATRIX(matrix_move, array_123, "Move assignment value invalid");
+}
+
+TEST_F(MatrixUnitTest, TestMatrixInsertionOperator) {
+    Matrix matrix = Matrix({ {1.1, 2.2, 3.3}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0 } });
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(ss.str(), "[ [ 1.1, 2.2, 3.3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]");
 }
 
 TEST_F(MatrixUnitTest, TestAddition) {

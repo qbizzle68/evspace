@@ -6,6 +6,7 @@
 */
 
 #include <vector.hpp>
+#include <sstream>    // std::stringstream
 
 using namespace evspace;
 
@@ -232,4 +233,14 @@ TEST(VectorUnitTest, TestVectorProjection) {
 
     Vector result = vector_projection(vector1, vector2);
     EXPECT_EQ(result, Vector(3, 3, 3)) << "Vector projection invalid result";
+}
+
+TEST(VectorUnitTest, TestVectorInsertionOperator) {
+    Vector vector = Vector(1.234, 2, -3.1415);
+    std::stringstream ss;
+    ss << vector;
+
+    const char* expected_output = "[ 1.234, 2, -3.1415 ]";
+    //EXPECT_STREQ(ss.str(), expected_output) << "Vector insertion operator invalid result";
+    EXPECT_EQ(ss.str(), expected_output) << "Vector insertion operator invalid result";
 }
