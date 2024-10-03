@@ -8,6 +8,7 @@
 #include <iterator>     // std::data
 #include <algorithm>    // std::copy
 #include <ostream>      // std::ostream
+#include <array>
 
 
 #include <iostream>
@@ -38,11 +39,13 @@ namespace evspace {
     private:
         double* m_data;
         MatrixRow* m_rows;
+
+        void set_rows();
     public:
         Matrix();
         template<typename T, std::size_t N>
         Matrix(const T(&)[N][N]);
-        //Matrix(const double(&)[3][3]);
+        Matrix(const std::array<std::array<double, 3>, 3> &);
         Matrix(const Matrix&);
         Matrix(Matrix&&) noexcept;
         ~Matrix();
@@ -93,7 +96,8 @@ namespace evspace {
         std::memcpy(this->m_data + 3, std::data(array[1]), 3 * sizeof(double));
         std::memcpy(this->m_data + 6, std::data(array[2]), 3 * sizeof(double));
 
-        this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+        //this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+        this->set_rows();
     }
 
     template<>
@@ -108,7 +112,8 @@ namespace evspace {
             }
         }
 
-        this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+        //this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
+        this->set_rows();
     }
 
 } // namespace evspace

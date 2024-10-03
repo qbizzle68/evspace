@@ -10,7 +10,11 @@ endif()
 add_library(libevs ${BUILD_TYPE}
     "angles.cpp"
     "vector.cpp"
- "matrix.cpp")
+    "matrix.cpp"
+    # set a variable for the include directory in the upper level
+    #"../include/rotation.hpp"
+    "rotation.cpp"
+)
 
 if(BUILD_DYNAMIC)
     target_compile_definitions(libevs PRIVATE EVSPACE_DLL)

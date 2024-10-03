@@ -28,9 +28,12 @@ endif()
 include_directories(${evspace_SOURCE_DIR}/include)
 
 add_executable(evspace_unit_testing
-    angles_unit_test.cpp
-    vector_unit_test.cpp
- "matrix_unit_test.cpp")
+    "angles_unit_test.cpp"
+    "vector_unit_test.cpp"
+    "matrix_unit_test.cpp"
+    "rotation_unit_test.cpp"
+    "reference_frame_unit_test.cpp"
+)
 
 target_link_libraries(evspace_unit_testing
     GTest::gtest_main
