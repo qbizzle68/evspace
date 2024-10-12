@@ -53,7 +53,7 @@ evspace::Matrix evspace::compute_rotation_matrix(double angle, const evspace::Ve
  *  frames are treated the same in the intermediate steps.
  */
 
-inline evspace::Vector evspace::_rotation_exec::_rotate_from_exec(const Matrix& matrix, const Vector& vector) {
+/*inline evspace::Vector evspace::_rotation_exec::_rotate_from_exec(const Matrix& matrix, const Vector& vector) {
     return matrix * vector;
 }
 
@@ -67,7 +67,7 @@ inline evspace::Vector evspace::_rotation_exec::_rotate_to_exec(const Matrix& ma
 
 inline evspace::Vector evspace::_rotation_exec::_rotate_to_exec(const Matrix& matrix, const Vector& vector, const Vector& offset) {
     return (vector - offset) * matrix;
-}
+}*/
 
 evspace::Vector evspace::rotate_from(const Matrix& rotation_matrix, const Vector& vector) {
     return _rotation_exec::_rotate_from_exec(rotation_matrix, vector);

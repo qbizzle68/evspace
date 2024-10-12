@@ -39,6 +39,8 @@ namespace evspace {
         EulerAngles(double, double, double);
         EulerAngles(const EulerAngles&);
 
+        EulerAngles& operator=(const EulerAngles&) = default;
+
         double& operator[](std::size_t);
         const double& operator[](std::size_t) const;
     };
