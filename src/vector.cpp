@@ -73,7 +73,7 @@ const double& evspace::Vector::operator[](std::size_t index) const {
     return this->m_data[index];
 }
 
-std::ostream& ::operator<<(std::ostream& out, const evspace::Vector& vector) {
+std::ostream& operator<<(std::ostream& out, const evspace::Vector& vector) {
     out << "[ " << vector.m_data[0] << ", " << vector.m_data[1] << ", " << vector.m_data[2] << " ]";
     return out;
 }
