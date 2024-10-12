@@ -73,7 +73,7 @@ const double& evspace::Vector::operator[](std::size_t index) const {
     return this->m_data[index];
 }
 
-std::ostream& evspace::operator<<(std::ostream& out, const evspace::Vector& vector) {
+std::ostream& ::operator<<(std::ostream& out, const evspace::Vector& vector) {
     out << "[ " << vector.m_data[0] << ", " << vector.m_data[1] << ", " << vector.m_data[2] << " ]";
     return out;
 }
@@ -246,10 +246,10 @@ evspace::Vector evspace::vector_projection(const Vector& project, const Vector& 
     return onto * scale;
 }
 
-evspace::Vector evspace::operator*(double scalar, const evspace::Vector& vector) {
+evspace::Vector operator*(double scalar, const evspace::Vector& vector) {
     return vector * scalar;
 }
 
-const evspace::Vector evspace::e1 = evspace::Vector(1, 0, 0);
-const evspace::Vector evspace::e2 = evspace::Vector(0, 1, 0);
-const evspace::Vector evspace::e3 = evspace::Vector(0, 0, 1);
+const evspace::Vector evspace::Vector::e1 = evspace::Vector(1, 0, 0);
+const evspace::Vector evspace::Vector::e2 = evspace::Vector(0, 1, 0);
+const evspace::Vector evspace::Vector::e3 = evspace::Vector(0, 0, 1);

@@ -12,7 +12,7 @@ evspace::Matrix evspace::compute_rotation_matrix(double angle, const evspace::Ve
         }
     );
 
-    return IDENTITY + (w * std::sin(angle)) + (w * w * (1 - std::cos(angle)));
+    return Matrix::IDENTITY + (w * std::sin(angle)) + (w * w * (1 - std::cos(angle)));
 }
 
 /**

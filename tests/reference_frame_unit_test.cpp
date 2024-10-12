@@ -9,8 +9,8 @@
 #include <vector.hpp>
 #include <matrix.hpp>
 #include <rotation.hpp>
-#include "resources/test_rotation_matrices.hpp"
-#include "resources/test_rotation_vectors.hpp"
+#include <resources/test_rotation_matrices.hpp>
+#include <resources/test_rotation_vectors.hpp>
 
 using namespace evspace;
 

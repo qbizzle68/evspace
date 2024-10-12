@@ -2,6 +2,7 @@
 #define _EVSPACE_ANGLES_H_
 
 #include <axis.hpp>
+#include <evspace_common.hpp>
 #include <cstddef>  // std::size_t
 
 namespace evspace {
@@ -29,7 +30,7 @@ namespace evspace {
     typedef RotationOrder<ZAxis, XAxis, ZAxis> ZXZ;
     typedef RotationOrder<ZAxis, YAxis, ZAxis> ZYZ;
 
-    class EulerAngles {
+    class EVSPACE_API EulerAngles {
     private:
         double m_values[3];
 

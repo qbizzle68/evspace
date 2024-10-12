@@ -10,16 +10,18 @@
 #include <ostream>      // std::ostream
 #include <array>
 
-
-#include <iostream>
+// forward declaration for use in global function declaration signature
+namespace evspace { class Matrix; }
+// non-local declaration for friend function
+EVSPACE_API std::ostream& operator<<(std::ostream&, const evspace::Matrix&);
 
 namespace evspace {
 
-    EVSPACE_EXPORT class Vector;
+    class Vector;
 
     //  MatrixRow just wraps around a block of memory from a Matrix array row.
     //  MatrixRow is not responsible for deleting any memory.
-    EVSPACE_EXPORT class MatrixRow {
+    class EVSPACE_API MatrixRow {
     private:
         double* m_data;
     public:
@@ -35,7 +37,7 @@ namespace evspace {
         const double& operator[](std::size_t) const;
     };
 
-    EVSPACE_EXPORT class Matrix {
+    class EVSPACE_API Matrix {
     private:
         double* m_data;
         MatrixRow* m_rows;
@@ -56,7 +58,7 @@ namespace evspace {
         MatrixRow& operator[](std::size_t);
         const MatrixRow& operator[](std::size_t) const;
 
-        friend std::ostream& operator<<(std::ostream&, const Matrix&);
+        friend std::ostream& ::operator<<(std::ostream&, const Matrix&);
 
         Matrix operator+(const Matrix&) const;
         Matrix& operator+=(const Matrix&);
@@ -79,10 +81,11 @@ namespace evspace {
         Matrix& transpose_inplace();
 
         friend class Vector;
-        friend Matrix _matrix_from_array(double*);
+
+        static const Matrix IDENTITY;
     };
 
-    extern Matrix IDENTITY;
+    //extern Matrix IDENTITY;
 
     // todo: why can't we do (const T(&list)[3][3])
     //template<typename T, std::size_t N>

@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : CMake project for evspace, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.8)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -11,8 +8,14 @@ endif()
 
 project ("evspace")
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    message(STATUS "GCC detected, adding compile flags")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+option(BUILD_SHARED "Build a shared library instead of a static library." OFF)
+
 # Add source to this project's executable.
-include_directories(${evspace_SOURCE_DIR}/include)
 add_subdirectory(src)
 
 # TODO: Add tests and install targets if needed.

@@ -234,5 +234,5 @@ TEST_F(MatrixUnitTest, TestMatrixOperators) {
 TEST_F(MatrixUnitTest, TestIdentity) {
     answer = create_array({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
 
-    COMPARE_MATRIX(IDENTITY, answer, "Matrix identity error");
+    COMPARE_MATRIX(Matrix::IDENTITY, answer, "Matrix identity error");
 }

@@ -6,9 +6,15 @@
 #include <evspace_common.hpp>
 #include <ostream>      // std::ostream
 
+// forward declaration for global friend function signature (below function)
+namespace evspace { class Vector; }
+
+// friend declaration must first be non-local to evspace::Vector (i.e. global namespace)
+EVSPACE_API std::ostream& operator<<(std::ostream& out, const evspace::Vector& vector);
+
 namespace evspace {
 
-    EVSPACE_EXPORT class Vector {
+    class EVSPACE_API Vector {
     private:
         double* m_data;
 
@@ -27,7 +33,7 @@ namespace evspace {
         double& operator[](std::size_t);
         const double& operator[](std::size_t) const;
 
-        friend std::ostream& operator<<(std::ostream&, const Vector&);
+        friend std::ostream& ::operator<<(std::ostream&, const Vector&);
 
         Vector operator+(const Vector&) const;
         Vector& operator+=(const Vector&);
@@ -49,26 +55,29 @@ namespace evspace {
         Vector& normalize() noexcept;
         Vector norm() const;
 
-        friend double vector_dot(const Vector&, const Vector&) noexcept;
-        friend Vector vector_cross(const Vector&, const Vector&);
-        friend double vector_angle(const Vector&, const Vector&);
-        friend Vector vector_exclude(const Vector&, const Vector&);
-        friend Vector vector_projection(const Vector&, const Vector&);
+        EVSPACE_API friend double vector_dot(const Vector&, const Vector&) noexcept;
+        EVSPACE_API friend Vector vector_cross(const Vector&, const Vector&);
+        EVSPACE_API friend double vector_angle(const Vector&, const Vector&);
+        EVSPACE_API friend Vector vector_exclude(const Vector&, const Vector&);
+        EVSPACE_API friend Vector vector_projection(const Vector&, const Vector&);
 
         friend class Matrix;
+
+        static const Vector e1;
+        static const Vector e2;
+        static const Vector e3;
     };
 
-    double vector_dot(const Vector&, const Vector&) noexcept;
-    Vector vector_cross(const Vector&, const Vector&);
-    double vector_angle(const Vector&, const Vector&);
-    Vector vector_exclude(const Vector&, const Vector&);
-    Vector vector_projection(const Vector&, const Vector&);
+    EVSPACE_API double vector_dot(const Vector&, const Vector&) noexcept;
+    EVSPACE_API Vector vector_cross(const Vector&, const Vector&);
+    EVSPACE_API double vector_angle(const Vector&, const Vector&);
+    EVSPACE_API Vector vector_exclude(const Vector&, const Vector&);
+    EVSPACE_API Vector vector_projection(const Vector&, const Vector&);
 
-    EVSPACE_EXPORT Vector operator*(double scalar, const Vector& vector);
-    EVSPACE_EXPORT std::ostream& operator<<(std::ostream&, const Vector&);
+    //EVSPACE_API extern const Vector e1, e2, e3;
 
-    EVSPACE_EXPORT extern const Vector e1, e2, e3;
+}   // namespace evspace
 
-}
+EVSPACE_API evspace::Vector operator*(double scalar, const evspace::Vector& vector);
 
 #endif // _EVSPACE_VECTOR_H_

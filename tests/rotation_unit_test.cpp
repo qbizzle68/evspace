@@ -10,8 +10,8 @@
 #include <vector.hpp>
 #include <matrix.hpp>
 #include <rotation.hpp>
-#include "resources/test_rotation_matrices.hpp"
-#include "resources/test_rotation_vectors.hpp"
+#include <resources/test_rotation_matrices.hpp>
+#include <resources/test_rotation_vectors.hpp>
 
 using namespace evspace;
 
@@ -31,13 +31,13 @@ TEST(RotationUnitTest, TestSingleAxisRotationMatrix) {
     _COMPARE_MATRIX_NEAR(result, answer, "Z axis rotation matrix error");
 
     //  extrinsic axis rotations (this should be sufficient to test
-    result = compute_rotation_matrix(angle, e1);
+    result = compute_rotation_matrix(angle, Vector::e1);
     answer = create_array(X_AXIS_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "X axis extrinsic rotation matrix error");
-    result = compute_rotation_matrix(angle, e2);
+    result = compute_rotation_matrix(angle, Vector::e2);
     answer = create_array(Y_AXIS_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "Y axis extrinsic rotation matrix error");
-    result = compute_rotation_matrix(angle, e3);
+    result = compute_rotation_matrix(angle, Vector::e3);
     answer = create_array(Z_AXIS_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "Z axis extrinsic rotation matrix error");
 }

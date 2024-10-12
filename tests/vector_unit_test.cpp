@@ -11,6 +11,8 @@
 
 using namespace evspace;
 
+//__declspec(dllimport) const Vector e1;
+
 TEST(VectorUnitTest, TestConstruction) {
     Vector vector = Vector();
     EXPECT_EQ(vector[0], 0.0) << "Default construction has non-zero x-components";
@@ -46,17 +48,17 @@ TEST(VectorUnitTest, TestConstruction) {
 }
 
 TEST(VectorUnitTest, TestElementaryVectors) {
-    EXPECT_EQ(e1[0], 1.0) << "e1 elementary vector x component not 1.0";
-    EXPECT_EQ(e1[1], 0.0) << "e1 elementary vector y component not 0.0";
-    EXPECT_EQ(e1[2], 0.0) << "e1 elementary vector z component not 0.0";
+    EXPECT_EQ(Vector::e1[0], 1.0) << "e1 elementary vector x component not 1.0";
+    EXPECT_EQ(Vector::e1[1], 0.0) << "e1 elementary vector y component not 0.0";
+    EXPECT_EQ(Vector::e1[2], 0.0) << "e1 elementary vector z component not 0.0";
 
-    EXPECT_EQ(e2[0], 0.0) << "e2 elementary vector x component not 0.0";
-    EXPECT_EQ(e2[1], 1.0) << "e2 elementary vector y component not 1.0";
-    EXPECT_EQ(e2[2], 0.0) << "e2 elementary vector z component not 0.0";
+    EXPECT_EQ(Vector::e2[0], 0.0) << "e2 elementary vector x component not 0.0";
+    EXPECT_EQ(Vector::e2[1], 1.0) << "e2 elementary vector y component not 1.0";
+    EXPECT_EQ(Vector::e2[2], 0.0) << "e2 elementary vector z component not 0.0";
 
-    EXPECT_EQ(e3[0], 0.0) << "e3 elementary vector x component not 0.0";
-    EXPECT_EQ(e3[1], 0.0) << "e3 elementary vector y component not 0.0";
-    EXPECT_EQ(e3[2], 1.0) << "e3 elementary vector z component not 1.0";
+    EXPECT_EQ(Vector::e3[0], 0.0) << "e3 elementary vector x component not 0.0";
+    EXPECT_EQ(Vector::e3[1], 0.0) << "e3 elementary vector y component not 0.0";
+    EXPECT_EQ(Vector::e3[2], 1.0) << "e3 elementary vector z component not 1.0";
 }
 
 TEST(VectorUnitTest, TestMathOperators) {
@@ -162,16 +164,16 @@ TEST(VectorUnitTest, TestVectorOperators) {
     lhs = Vector(1, 1, 0);
     rhs = Vector(1, 0, 0);
     EXPECT_DOUBLE_EQ(vector_angle(lhs, rhs), EVSPACE_PI_4) << "Vector angle non-trivial example error";
-    EXPECT_DOUBLE_EQ(vector_angle(e1, e2), EVSPACE_PI_2) << "Vector angle trivial example error";
+    EXPECT_DOUBLE_EQ(vector_angle(Vector::e1, Vector::e2), EVSPACE_PI_2) << "Vector angle trivial example error";
 
     lhs = Vector(1, 2, 3);
-    result = vector_exclude(lhs, e1);
+    result = vector_exclude(lhs, Vector::e1);
     answer = create_array({ 0, 2, 3 });
     COMPARE_VECTOR(result, answer, "Vector excluding X-axis error");
-    result = vector_exclude(lhs, e2);
+    result = vector_exclude(lhs, Vector::e2);
     answer = create_array({ 1, 0, 3 });
     COMPARE_VECTOR(result, answer, "Vector excluding Y-axis error");
-    result = vector_exclude(lhs, e3);
+    result = vector_exclude(lhs, Vector::e3);
     answer = create_array({ 1, 2, 0 });
     COMPARE_VECTOR(result, answer, "Vector excluding Z-axis error");
 

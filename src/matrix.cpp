@@ -151,7 +151,7 @@ const evspace::MatrixRow& evspace::Matrix::operator[](std::size_t index) const {
     return this->m_rows[index];
 }
 
-std::ostream& evspace::operator<<(std::ostream& out, const Matrix& matrix) {
+std::ostream& operator<<(std::ostream& out, const evspace::Matrix& matrix) {
     out << "[ [ " << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << " ], [ "
         << matrix[1][0] << ", " << matrix[1][1] << ", " << matrix[1][2] << " ], [ "
         << matrix[2][0] << ", " << matrix[2][1] << ", " << matrix[2][2] << " ] ]";
@@ -313,4 +313,4 @@ evspace::Matrix& evspace::Matrix::transpose_inplace() {
     return *this;
 }
 
-evspace::Matrix evspace::IDENTITY = evspace::Matrix({ {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} });
+const evspace::Matrix evspace::Matrix::IDENTITY = evspace::Matrix({ {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} });

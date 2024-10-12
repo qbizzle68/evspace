@@ -4,6 +4,7 @@
 #include <angles.hpp>
 #include <matrix.hpp>
 #include <vector.hpp>
+#include <evspace_common.hpp>
 #include <cstddef>      // std::size_t
 #include <stdexcept>    // std::out_of_range
 #include <cmath>        // std::cos, std::sin
@@ -74,7 +75,7 @@ namespace evspace {
     template<typename axis>
     Matrix compute_rotation_matrix(double);
 
-    Matrix compute_rotation_matrix(double angle, const Vector&);
+    EVSPACE_API Matrix compute_rotation_matrix(double angle, const Vector&);
 
     template<typename rotation_order, typename rotation_type = IntrinsicRotation>
     Matrix compute_rotation_matrix(const EulerAngles&);
@@ -88,17 +89,17 @@ namespace evspace {
 
     namespace _rotation_exec {
 
-        inline Vector _rotate_from_exec(const Matrix&, const Vector&);
-        inline Vector _rotate_to_exec(const Matrix&, const Vector&);
-        inline Vector _rotate_from_exec(const Matrix&, const Vector&, const Vector&);
-        inline Vector _rotate_to_exec(const Matrix&, const Vector&, const Vector&);
+        EVSPACE_API inline Vector _rotate_from_exec(const Matrix&, const Vector&);
+        EVSPACE_API inline Vector _rotate_to_exec(const Matrix&, const Vector&);
+        EVSPACE_API inline Vector _rotate_from_exec(const Matrix&, const Vector&, const Vector&);
+        EVSPACE_API inline Vector _rotate_to_exec(const Matrix&, const Vector&, const Vector&);
 
     }
 
-    Vector rotate_from(const Matrix&, const Vector&);
-    Vector rotate_from(const Matrix&, const Vector&, const Vector&);
-    Vector rotate_to(const Matrix&, const Vector&);
-    Vector rotate_to(const Matrix&, const Vector&, const Vector&);
+    EVSPACE_API Vector rotate_from(const Matrix&, const Vector&);
+    EVSPACE_API Vector rotate_from(const Matrix&, const Vector&, const Vector&);
+    EVSPACE_API Vector rotate_to(const Matrix&, const Vector&);
+    EVSPACE_API Vector rotate_to(const Matrix&, const Vector&, const Vector&);
 
     template<typename axis>
     Vector rotate_from(double, const Vector&);
