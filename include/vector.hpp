@@ -15,9 +15,10 @@ EVSPACE_API std::ostream& operator<<(std::ostream& out, const evspace::Vector& v
 namespace evspace {
 
     class EVSPACE_API Vector {
-    private:
+    protected:
         double* m_data;
 
+    private:
         inline static double scalar_projection(const Vector&, const Vector&) noexcept;
 
     public:

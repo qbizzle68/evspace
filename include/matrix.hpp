@@ -22,7 +22,7 @@ namespace evspace {
     //  MatrixRow just wraps around a block of memory from a Matrix array row.
     //  MatrixRow is not responsible for deleting any memory.
     class EVSPACE_API MatrixRow {
-    private:
+    protected:
         double* m_data;
     public:
         MatrixRow() = delete;
