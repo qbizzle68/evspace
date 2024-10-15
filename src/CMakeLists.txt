@@ -14,13 +14,16 @@ add_library(evspace ${BUILD_TYPE}
     "rotation.cpp"
 )
 
+set_target_properties(evspace PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${EVSPACE_LIB_DIR})
+set_target_properties(evspace PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${EVSPACE_LIB_DIR})
+
 if(BUILD_SHARED)
     target_compile_definitions(evspace PRIVATE EVSPACE_SHARED_LIB)
     # Differentiates need of dllexport vs dllimport in Windows DLL builds.
     target_compile_definitions(evspace PRIVATE EVSPACE_BUILD)
 endif()
  
-target_include_directories(evspace PUBLIC ${evspace_SOURCE_DIR}/include)
+target_include_directories(evspace PUBLIC ${evspace_library_SOURCE_DIR}/include)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET evspace PROPERTY CXX_STANDARD 20)

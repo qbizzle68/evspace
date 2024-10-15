@@ -35,7 +35,7 @@ add_executable(evspace_unit_testing
 
 target_include_directories(evspace_unit_testing PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${evspace_SOURCE_DIR}/include"
+    "${evspace_library_SOURCE_DIR}/include"
 )
 
 if(BUILD_SHARED)
