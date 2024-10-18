@@ -16,6 +16,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(EVSPACE_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 
 option(BUILD_SHARED "Build a shared library instead of a static library." OFF)
+option(NOTHROW_CONSTRUCTOR "Ensure allocating data buffers to not throw on eror." OFF)
 
 # Add source to this project's executable.
 add_subdirectory(src)

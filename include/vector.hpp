@@ -22,9 +22,9 @@ namespace evspace {
         inline static double scalar_projection(const Vector&, const Vector&) noexcept;
 
     public:
-        Vector();
-        Vector(double, double, double);
-        Vector(const Vector&);
+        Vector() EVSPACE_NOEXCEPT;
+        Vector(double, double, double) EVSPACE_NOEXCEPT;
+        Vector(const Vector&) EVSPACE_NOEXCEPT;
         Vector(Vector&&) noexcept;
         ~Vector();
 
@@ -50,6 +50,8 @@ namespace evspace {
 
         bool operator==(const Vector&) const;
         bool operator!=(const Vector&) const;
+
+        bool is_valid() const;
 
         double magnitude() const noexcept;
         double magnitude_squared() const noexcept;

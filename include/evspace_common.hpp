@@ -14,4 +14,14 @@
 #    define EVSPACE_API
 #endif
 
+// define to keep constructors that allocate memory from throwing std::bad_alloc
+#ifdef EVSPACE_CONSTRUCTOR_NOTHROW
+#include <new>
+#define EVSPACE_NOTHROW     (std::nothrow)
+#define EVSPACE_NOEXCEPT    noexcept
+#else
+#define EVSPACE_NOTHROW
+#define EVSPACE_NOEXCEPT
+#endif
+
 #endif // _EVS_COMMON_H_

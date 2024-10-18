@@ -38,17 +38,17 @@ namespace evspace {
     };
 
     class EVSPACE_API Matrix {
-    private:
+    protected:
         double* m_data;
         MatrixRow* m_rows;
 
-        void set_rows();
+        void set_rows() EVSPACE_NOEXCEPT;
     public:
-        Matrix();
+        Matrix() EVSPACE_NOEXCEPT;
         template<typename T, std::size_t N>
-        Matrix(const T(&)[N][N]);
-        Matrix(const std::array<std::array<double, 3>, 3> &);
-        Matrix(const Matrix&);
+        Matrix(const T(&)[N][N]) EVSPACE_NOEXCEPT;
+        Matrix(const std::array<std::array<double, 3>, 3> &) EVSPACE_NOEXCEPT;
+        Matrix(const Matrix&) EVSPACE_NOEXCEPT;
         Matrix(Matrix&&) noexcept;
         ~Matrix();
 
@@ -76,6 +76,8 @@ namespace evspace {
         bool operator==(const Matrix&) const;
         bool operator!=(const Matrix&) const;
 
+        bool is_valid() const;
+
         double determinate() const;
         Matrix transpose() const;
         Matrix& transpose_inplace();
@@ -93,7 +95,7 @@ namespace evspace {
     inline Matrix::Matrix(const double(&array)[3][3]) {
         //static_assert(N == 3, "Initializer arrays must have length exactly 3");
 
-        this->m_data = new double[9];
+        this->m_data = new EVSPACE_NOTHROW double[9];
 
         std::memcpy(this->m_data, std::data(array[0]), 3 * sizeof(double));
         std::memcpy(this->m_data + 3, std::data(array[1]), 3 * sizeof(double));
@@ -105,7 +107,7 @@ namespace evspace {
 
     template<>
     inline Matrix::Matrix(const int(&array)[3][3]) {
-        this->m_data = new double[9];
+        this->m_data = new EVSPACE_NOTHROW double[9];
 
         const int* row = NULL;
         for (int i = 0; i < 3; i++) {

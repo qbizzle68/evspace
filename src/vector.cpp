@@ -7,8 +7,8 @@
 #include <ostream>          // std::ostream
 #include <cstdio>           // std::sprintf
 
-#define VECTOR_LENGTH 3
-#define NEW_ARRAY   new double[VECTOR_LENGTH]
+//#define VECTOR_LENGTH 3
+//#define NEW_ARRAY   new double[VECTOR_LENGTH]
 #define VECTOR_X(v) v.m_data[0]
 #define VECTOR_Y(v) v.m_data[1]
 #define VECTOR_Z(v) v.m_data[2]
@@ -19,18 +19,21 @@ static inline void set_array(double* vector, double x, double y, double z) {
     vector[2] = z;
 }
 
-evspace::Vector::Vector() {
-    this->m_data = NEW_ARRAY;
+evspace::Vector::Vector() EVSPACE_NOEXCEPT {
+    //this->m_data = NEW_ARRAY;
+    this->m_data = new EVSPACE_NOTHROW double[3];
     set_array(this->m_data, 0.0, 0.0, 0.0);
 }
 
-evspace::Vector::Vector(double x, double y, double z) {
-    this->m_data = NEW_ARRAY;
+evspace::Vector::Vector(double x, double y, double z) EVSPACE_NOEXCEPT {
+    //this->m_data = NEW_ARRAY;
+    this->m_data = new EVSPACE_NOTHROW double[3];
     set_array(this->m_data, x, y, z);
 }
 
-evspace::Vector::Vector(const Vector& cpy) {
-    this->m_data = NEW_ARRAY;
+evspace::Vector::Vector(const Vector& cpy) EVSPACE_NOEXCEPT {
+    //this->m_data = NEW_ARRAY;
+    this->m_data = new EVSPACE_NOTHROW double[3];
     set_array(this->m_data, cpy.m_data[0], cpy.m_data[1], cpy.m_data[2]);
 }
 
@@ -178,6 +181,10 @@ bool evspace::Vector::operator==(const Vector& rhs) const {
 
 bool evspace::Vector::operator!=(const Vector& rhs) const {
     return !(*this == rhs);
+}
+
+bool evspace::Vector::is_valid() const {
+    return (this->m_data != NULL);
 }
 
 double evspace::Vector::magnitude() const noexcept {

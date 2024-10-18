@@ -62,16 +62,16 @@ const double& evspace::MatrixRow::operator[](std::size_t index) const {
 #define MATRIX_SECOND_ROW(m)    (m.m_data + 3)
 #define MATRIX_THIRD_ROW(m)     (m.m_data + 6)
 
-void evspace::Matrix::set_rows() {
-    this->m_rows = new MatrixRow[3]{
+void evspace::Matrix::set_rows() EVSPACE_NOEXCEPT {
+    this->m_rows = new EVSPACE_NOTHROW MatrixRow[3]{
         MATRIX_FIRST_ROW((*this)),
         MATRIX_SECOND_ROW((*this)),
         MATRIX_THIRD_ROW((*this))
     };
 }
 
-evspace::Matrix::Matrix() {
-    this->m_data = new double[9] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+evspace::Matrix::Matrix() EVSPACE_NOEXCEPT {
+    this->m_data = new EVSPACE_NOTHROW double[9] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     this->set_rows();
     /*this->m_rows = new MatrixRow[3]{
         MATRIX_FIRST_ROW((*this)),
@@ -80,8 +80,8 @@ evspace::Matrix::Matrix() {
     };*/
 }
 
-evspace::Matrix::Matrix(const std::array<std::array<double, 3>, 3> &array) {
-    this->m_data = new double[9];
+evspace::Matrix::Matrix(const std::array<std::array<double, 3>, 3> &array) EVSPACE_NOEXCEPT {
+    this->m_data = new EVSPACE_NOTHROW double[9];
 
     const std::array<double, 3>* list_ptr = array.data();
     std::memcpy(MATRIX_FIRST_ROW((*this)), list_ptr, 3 * sizeof(double));
@@ -96,8 +96,8 @@ evspace::Matrix::Matrix(const std::array<std::array<double, 3>, 3> &array) {
     };*/
 }
 
-evspace::Matrix::Matrix(const Matrix& cpy) {
-    this->m_data = new double[9];
+evspace::Matrix::Matrix(const Matrix& cpy) EVSPACE_NOEXCEPT {
+    this->m_data = new EVSPACE_NOTHROW double[9];
     std::memcpy(this->m_data, cpy.m_data, MATRIX_SIZE);
     this->set_rows();
     /*this->m_rows = new MatrixRow[3]{
@@ -285,6 +285,10 @@ bool evspace::Matrix::operator==(const Matrix& rhs) const {
 
 bool evspace::Matrix::operator!=(const Matrix& rhs) const {
     return !(*this == rhs);
+}
+
+bool evspace::Matrix::is_valid() const {
+    return (this->m_data != NULL && this->m_rows != NULL);
 }
 
 double evspace::Matrix::determinate() const {

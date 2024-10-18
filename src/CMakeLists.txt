@@ -22,6 +22,10 @@ if(BUILD_SHARED)
     # Differentiates need of dllexport vs dllimport in Windows DLL builds.
     target_compile_definitions(evspace PRIVATE EVSPACE_BUILD)
 endif()
+
+if(NOTHROW_CONSTRUCTOR)
+    target_compile_definitions(evspace PRIVATE EVSPACE_CONSTRUCTOR_NOTHROW)
+endif(NOTHROW_CONSTRUCTOR)
  
 target_include_directories(evspace PUBLIC ${evspace_library_SOURCE_DIR}/include)
 
