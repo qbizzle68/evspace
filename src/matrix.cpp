@@ -317,4 +317,52 @@ evspace::Matrix& evspace::Matrix::transpose_inplace() {
     return *this;
 }
 
+double evspace::Matrix::_compute_cofactor_element(size_t i, size_t j, double det) const {
+    if (i == 0 && j == 0) {
+        return (this->m_data[4] * this->m_data[8] - this->m_data[5] * this->m_data[7]) / det;
+    }
+    else if (i == 0 && j == 1) {
+        return -(this->m_data[3] * this->m_data[8] - this->m_data[5] * this->m_data[6]) / det;
+    }
+    else if (i == 0 && j == 2) {
+        return (this->m_data[3] * this->m_data[7] - this->m_data[4] * this->m_data[6]) / det;
+    }
+    else if (i == 1 && j == 0) {
+        return -(this->m_data[1] * this->m_data[8] - this->m_data[2] * this->m_data[7]) / det;
+    }
+    else if (i == 1 && j == 1) {
+        return (this->m_data[0] * this->m_data[8] - this->m_data[2] * this->m_data[6]) / det;
+    }
+    else if (i == 1 && j == 2) {
+        return -(this->m_data[0] * this->m_data[7] - this->m_data[1] * this->m_data[6]) / det;
+    }
+    else if (i == 2 && j == 0) {
+        return (this->m_data[4] * this->m_data[8] - this->m_data[5] * this->m_data[7]) / det;
+    }
+    else if (i == 2 && j == 1) {
+        return -(this->m_data[0] * this->m_data[5] - this->m_data[2] * this->m_data[3]) / det;
+    }
+    else if (i == 2 && j == 2) {
+        return (this->m_data[0] * this->m_data[4] - this->m_data[1] * this->m_data[3]) / det;
+    }
+}
+
+evspace::Matrix evspace::Matrix::inverse() const {
+    double determinate = this->determinate();
+    if (determinate == 0) {
+        throw std::runtime_error("Unable to invert singular matrix");
+    }
+
+    Matrix result = Matrix();
+    // element (0, 0)
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            result.m_data[i * 3 + j] = this->_compute_cofactor_element(i, j, determinate);
+        }
+    }
+
+    result.transpose_inplace();
+    return result;
+}
+
 const evspace::Matrix evspace::Matrix::IDENTITY = evspace::Matrix({ {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} });

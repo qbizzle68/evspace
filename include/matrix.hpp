@@ -43,6 +43,7 @@ namespace evspace {
         MatrixRow* m_rows;
 
         void set_rows() EVSPACE_NOEXCEPT;
+        double _compute_cofactor_element(size_t, size_t, double) const;
     public:
         Matrix() EVSPACE_NOEXCEPT;
         template<typename T, std::size_t N>
@@ -81,6 +82,7 @@ namespace evspace {
         double determinate() const;
         Matrix transpose() const;
         Matrix& transpose_inplace();
+        Matrix inverse() const;
 
         friend class Vector;
 
