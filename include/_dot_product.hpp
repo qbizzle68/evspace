@@ -1,7 +1,9 @@
 #ifndef _EVSPACE_DOT_PRODUCT_H_
 #define _EVSPACE_DOT_PRODUCT_H_
 
-#include <cstddef>
+#include <cstddef>  // std::size_t
+#include <cmath>    // std::fma
+#include <evspace_common.hpp>
 #include <vector.hpp>
 
 namespace evspace {
@@ -28,10 +30,14 @@ namespace evspace {
     }
 
     template<typename T>
-    double _compute_dot_product(double* const row, double* const column) {
-        return row[0] * column[0]
-            + row[1] * *(column + dphelpers::column_skips<T>())
-            + row[2] * *(column + 2 * dphelpers::column_skips<T>());
+    constexpr inline double _compute_dot_product(
+        double* const EVSPACE_RESTRICT row,
+        double* const EVSPACE_RESTRICT column) noexcept
+    {
+        constexpr std::size_t stride = dphelpers::column_skips<T>();
+        return std::fma(row[0], column[0],
+               std::fma(row[1], column[stride],
+                            row[2] * column[2 * stride]));
     }
 
 }

@@ -231,11 +231,14 @@ evspace::Vector evspace::Matrix::operator*(const Vector& vec) const {
 }
 
 evspace::Matrix evspace::Matrix::operator*(const Matrix& rhs) const {
-    Matrix result = Matrix();
+    Matrix result;
+    const double* const rhs_data = rhs.m_data;
+    const double* const lhs_data = this->m_data;
 
     for (int i = 0; i < 3; i++) {
+        const double* const row = lhs_data + (i * 3);
         for (int j = 0; j < 3; j++) {
-            MATRIX_ITEM(result, i, j) = _compute_dot_product<Matrix>(this->m_data + (i * 3), rhs.m_data + j);
+            MATRIX_ITEM(result, i, j) = _compute_dot_product<Matrix>(row, rhs_data + j);
         }
     }
 

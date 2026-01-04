@@ -24,4 +24,13 @@
 #define EVSPACE_NOEXCEPT
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#   define EVSPACE_RESTRICT __restrict__
+#elif defined(_MSC_VER)
+#   define EVSPACE_RESTRICT __restrict
+#else
+#   define EVSPACE_RESTRUCT
+#endif
+
+
 #endif // _EVS_COMMON_H_
