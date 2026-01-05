@@ -31,8 +31,8 @@ namespace evspace {
 
     template<typename T>
     constexpr inline double _compute_dot_product(
-        double* const EVSPACE_RESTRICT row,
-        double* const EVSPACE_RESTRICT column) noexcept
+        const double* const EVSPACE_RESTRICT row,
+        const double* const EVSPACE_RESTRICT column) noexcept
     {
         constexpr std::size_t stride = dphelpers::column_skips<T>();
         return std::fma(row[0], column[0],
