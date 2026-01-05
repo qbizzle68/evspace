@@ -8,49 +8,10 @@
 #include <vector.hpp>
 #include <matrix.hpp>
 #include <sstream>      // std::stringstream
+#include <gtest/gtest.h>
+#include <input_pch.hpp>
 
 using namespace evspace;
-
-class MatrixRowUnitTest : public testing::Test {
-protected:
-    const Matrix matrix_123;
-
-    MatrixRowUnitTest() : matrix_123(Matrix({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} })) { }
-};
-
-TEST_F(MatrixRowUnitTest, TestConstruction) {
-    double* ptr = new double[3] {1, 2, 3 };
-
-    MatrixRow row = MatrixRow(ptr);
-    EXPECT_EQ(row[0], 1.0) << "Constructor result x-value invalid";
-    EXPECT_EQ(row[1], 2.0) << "Constructor result y-value invalid";
-    EXPECT_EQ(row[2], 3.0) << "Constructor result z-value invalid";
-
-    MatrixRow row_copy = MatrixRow(row);
-    EXPECT_EQ(row_copy[0], 1.0) << "Copy constructor result x-value invalid";
-    EXPECT_EQ(row_copy[1], 2.0) << "Copy constructor result y-value invalid";
-    EXPECT_EQ(row_copy[2], 3.0) << "Copy constructor result z-value invalid";
-
-    MatrixRow row_move = MatrixRow(std::move(row));
-    EXPECT_EQ(row_move[0], 1.0) << "Move constructor result x-value invalid";
-    EXPECT_EQ(row_move[1], 2.0) << "Move constructor result y-value invalid";
-    EXPECT_EQ(row_move[2], 3.0) << "Move constructor result z-value invalid";
-}
-
-TEST_F(MatrixRowUnitTest, TestAssignment) {
-    double* ptr = new double[3] {1, 2, 3};
-    MatrixRow row = MatrixRow(ptr);
-    
-    MatrixRow row_copy = row;
-    EXPECT_EQ(row_copy[0], 1.0) << "Assignment result x-value invalid";
-    EXPECT_EQ(row_copy[1], 2.0) << "Assignment result y-value invalid";
-    EXPECT_EQ(row_copy[2], 3.0) << "Assignment result z-value invalid";
-
-    MatrixRow row_move = std::move(row);
-    EXPECT_EQ(row_move[0], 1.0) << "Move assignment result x-value invalid";
-    EXPECT_EQ(row_move[1], 2.0) << "Move assignment result y-value invalid";
-    EXPECT_EQ(row_move[2], 3.0) << "Move assignment result z-value invalid";
-}
 
 class MatrixUnitTest : public testing::Test {
 protected:
@@ -118,9 +79,9 @@ TEST_F(MatrixUnitTest, TestCreation) {
 
 TEST_F(MatrixUnitTest, TestIndexSetter) {
     lhs = Matrix();
-    lhs[0][0] = 1;
-    lhs[1][2] = 2;
-    lhs[2][1] = 3;
+    lhs(0, 0) = 1;
+    lhs(1, 2) = 2;
+    lhs(2, 1) = 3;
     
     answer = create_array({ {1, 0, 0}, {0, 0, 2}, {0, 3, 0} });
     COMPARE_MATRIX(lhs, answer, "Matrix index setter operator error");

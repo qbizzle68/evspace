@@ -8,6 +8,8 @@
 #include <vector.hpp>
 #include <matrix.hpp>
 #include <sstream>    // std::stringstream
+#include <gtest/gtest.h>
+#include <input_pch.hpp>
 
 using namespace evspace;
 

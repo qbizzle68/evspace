@@ -7,6 +7,7 @@
 
 #include <axis.hpp>
 #include <angles.hpp>
+#include <gtest/gtest.h>
 
 using namespace evspace;
 

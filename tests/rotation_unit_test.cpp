@@ -12,6 +12,8 @@
 #include <rotation.hpp>
 #include <resources/test_rotation_matrices.hpp>
 #include <resources/test_rotation_vectors.hpp>
+#include <gtest/gtest.h>
+#include <input_pch.hpp>
 
 using namespace evspace;
 
