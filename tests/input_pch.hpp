@@ -14,26 +14,26 @@
 // include one so that the macro looks more like a valid statement.
 
 #define COMPARE_MATRIX(mat, ans, msg) \
-    EXPECT_DOUBLE_EQ(mat[0][0], ans[0][0]) << msg << " at index (0, 0)"; \
-    EXPECT_DOUBLE_EQ(mat[0][1], ans[0][1]) << msg << " at index (0, 1)"; \
-    EXPECT_DOUBLE_EQ(mat[0][2], ans[0][2]) << msg << " at index (0, 2)"; \
-    EXPECT_DOUBLE_EQ(mat[1][0], ans[1][0]) << msg << " at index (1, 0)"; \
-    EXPECT_DOUBLE_EQ(mat[1][1], ans[1][1]) << msg << " at index (1, 1)"; \
-    EXPECT_DOUBLE_EQ(mat[1][2], ans[1][2]) << msg << " at index (1, 2)"; \
-    EXPECT_DOUBLE_EQ(mat[2][0], ans[2][0]) << msg << " at index (2, 0)"; \
-    EXPECT_DOUBLE_EQ(mat[2][1], ans[2][1]) << msg << " at index (2, 1)"; \
-    EXPECT_DOUBLE_EQ(mat[2][2], ans[2][2]) << msg << " at index (2, 2)"
+    EXPECT_DOUBLE_EQ(mat(0, 0), ans[0][0]) << msg << " at index (0, 0)"; \
+    EXPECT_DOUBLE_EQ(mat(0, 1), ans[0][1]) << msg << " at index (0, 1)"; \
+    EXPECT_DOUBLE_EQ(mat(0, 2), ans[0][2]) << msg << " at index (0, 2)"; \
+    EXPECT_DOUBLE_EQ(mat(1, 0), ans[1][0]) << msg << " at index (1, 0)"; \
+    EXPECT_DOUBLE_EQ(mat(1, 1), ans[1][1]) << msg << " at index (1, 1)"; \
+    EXPECT_DOUBLE_EQ(mat(1, 2), ans[1][2]) << msg << " at index (1, 2)"; \
+    EXPECT_DOUBLE_EQ(mat(2, 0), ans[2][0]) << msg << " at index (2, 0)"; \
+    EXPECT_DOUBLE_EQ(mat(2, 1), ans[2][1]) << msg << " at index (2, 1)"; \
+    EXPECT_DOUBLE_EQ(mat(2, 2), ans[2][2]) << msg << " at index (2, 2)"
 
 #define COMPARE_MATRIX_NEAR(mat, ans, msg, error) \
-    EXPECT_NEAR(mat[0][0], ans[0][0], error) << msg << " at index (0, 0)"; \
-    EXPECT_NEAR(mat[0][1], ans[0][1], error) << msg << " at index (0, 1)"; \
-    EXPECT_NEAR(mat[0][2], ans[0][2], error) << msg << " at index (0, 2)"; \
-    EXPECT_NEAR(mat[1][0], ans[1][0], error) << msg << " at index (1, 0)"; \
-    EXPECT_NEAR(mat[1][1], ans[1][1], error) << msg << " at index (1, 1)"; \
-    EXPECT_NEAR(mat[1][2], ans[1][2], error) << msg << " at index (1, 2)"; \
-    EXPECT_NEAR(mat[2][0], ans[2][0], error) << msg << " at index (2, 0)"; \
-    EXPECT_NEAR(mat[2][1], ans[2][1], error) << msg << " at index (2, 1)"; \
-    EXPECT_NEAR(mat[2][2], ans[2][2], error) << msg << " at index (2, 2)"
+    EXPECT_NEAR(mat(0, 0), ans[0][0], error) << msg << " at index (0, 0)"; \
+    EXPECT_NEAR(mat(0, 1), ans[0][1], error) << msg << " at index (0, 1)"; \
+    EXPECT_NEAR(mat(0, 2), ans[0][2], error) << msg << " at index (0, 2)"; \
+    EXPECT_NEAR(mat(1, 0), ans[1][0], error) << msg << " at index (1, 0)"; \
+    EXPECT_NEAR(mat(1, 1), ans[1][1], error) << msg << " at index (1, 1)"; \
+    EXPECT_NEAR(mat(1, 2), ans[1][2], error) << msg << " at index (1, 2)"; \
+    EXPECT_NEAR(mat(2, 0), ans[2][0], error) << msg << " at index (2, 0)"; \
+    EXPECT_NEAR(mat(2, 1), ans[2][1], error) << msg << " at index (2, 1)"; \
+    EXPECT_NEAR(mat(2, 2), ans[2][2], error) << msg << " at index (2, 2)"
 
 #define COMPARE_VECTOR(vec, ans, msg) \
     EXPECT_DOUBLE_EQ(vec[0], ans[0]) << msg << " at index 0"; \

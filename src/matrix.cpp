@@ -7,46 +7,6 @@
 #include <algorithm>    // std::swap, std::transform
 #include <functional>   // std::plus,
 
-evspace::MatrixRow::MatrixRow(double* data) noexcept : m_data(data) { }
-
-evspace::MatrixRow::MatrixRow(const MatrixRow& row) noexcept : m_data(row.m_data) { }
-
-evspace::MatrixRow::MatrixRow(MatrixRow&& row) noexcept {
-    this->m_data = row.m_data;
-    row.m_data = NULL;
-}
-
-evspace::MatrixRow& evspace::MatrixRow::operator=(const MatrixRow& cpy) noexcept {
-    // no need to free the current data since it is only a reference and isn't owned by this
-    this->m_data = cpy.m_data;
-
-    return *this;
-}
-
-evspace::MatrixRow& evspace::MatrixRow::operator=(MatrixRow&& move) noexcept {
-    // no need to free the current data since it is only a reference
-    this->m_data = move.m_data;
-
-    return *this;
-}
-
-double& evspace::MatrixRow::operator[](std::size_t index) {
-    if (index > 2) {
-        throw std::out_of_range("MatrixRow column index out of range");
-    }
-
-    return this->m_data[index];
-}
-
-
-const double& evspace::MatrixRow::operator[](std::size_t index) const {
-    if (index > 2) {
-        throw std::out_of_range("MatrixRow column index out of range");
-    }
-
-    return this->m_data[index];
-}
-
 /******************** MATRIX IMPLEMENTATION **********************/
 
 #define MATRIX_ARRAY_LENGTH     9
@@ -62,22 +22,8 @@ const double& evspace::MatrixRow::operator[](std::size_t index) const {
 #define MATRIX_SECOND_ROW(m)    (m.m_data + 3)
 #define MATRIX_THIRD_ROW(m)     (m.m_data + 6)
 
-void evspace::Matrix::set_rows() EVSPACE_NOEXCEPT {
-    this->m_rows = new EVSPACE_NOTHROW MatrixRow[3]{
-        MATRIX_FIRST_ROW((*this)),
-        MATRIX_SECOND_ROW((*this)),
-        MATRIX_THIRD_ROW((*this))
-    };
-}
-
 evspace::Matrix::Matrix() EVSPACE_NOEXCEPT {
     this->m_data = new EVSPACE_NOTHROW double[9] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    this->set_rows();
-    /*this->m_rows = new MatrixRow[3]{
-        MATRIX_FIRST_ROW((*this)),
-        MATRIX_SECOND_ROW((*this)),
-        MATRIX_THIRD_ROW((*this)),
-    };*/
 }
 
 evspace::Matrix::Matrix(const std::array<std::array<double, 3>, 3> &array) EVSPACE_NOEXCEPT {
@@ -87,74 +33,63 @@ evspace::Matrix::Matrix(const std::array<std::array<double, 3>, 3> &array) EVSPA
     std::memcpy(MATRIX_FIRST_ROW((*this)), list_ptr, 3 * sizeof(double));
     std::memcpy(MATRIX_SECOND_ROW((*this)), list_ptr+1, 3 * sizeof(double));
     std::memcpy(MATRIX_THIRD_ROW((*this)), list_ptr+2, 3 * sizeof(double));
-    this->set_rows();
-
-    /*this->m_rows = new MatrixRow[3]{
-        MATRIX_FIRST_ROW((*this)),
-        MATRIX_SECOND_ROW((*this)),
-        MATRIX_THIRD_ROW((*this))
-    };*/
 }
 
 evspace::Matrix::Matrix(const Matrix& cpy) EVSPACE_NOEXCEPT {
     this->m_data = new EVSPACE_NOTHROW double[9];
     std::memcpy(this->m_data, cpy.m_data, MATRIX_SIZE);
-    this->set_rows();
-    /*this->m_rows = new MatrixRow[3]{
-        MATRIX_FIRST_ROW((*this)),
-        MATRIX_SECOND_ROW((*this)),
-        MATRIX_THIRD_ROW((*this))
-    };*/
 }
 
 evspace::Matrix::Matrix(Matrix&& move) noexcept {
     this->m_data = move.m_data;
     move.m_data = NULL;
-    this->m_rows = move.m_rows;
-    move.m_rows = NULL;
 }
 
 evspace::Matrix::~Matrix() {
-    delete[] this->m_rows;
     delete[] this->m_data;
 }
 
 evspace::Matrix& evspace::Matrix::operator=(const Matrix& rhs) {
     std::memcpy(this->m_data, rhs.m_data, MATRIX_SIZE);
-    this->m_rows[0] = MatrixRow(MATRIX_FIRST_ROW((*this)));
-    this->m_rows[1] = MatrixRow(MATRIX_SECOND_ROW((*this)));
-    this->m_rows[2] = MatrixRow(MATRIX_THIRD_ROW((*this)));
 
     return *this;
 }
 
 evspace::Matrix& evspace::Matrix::operator=(Matrix&& rhs) noexcept {
     std::swap(this->m_data, rhs.m_data);
-    std::swap(this->m_rows, rhs.m_rows);
 
     return *this;
 }
 
-evspace::MatrixRow& evspace::Matrix::operator[](std::size_t index) {
-    if (index > 2) {
+double& evspace::Matrix::operator()(std::size_t row, std::size_t col) {
+    if (row > 2) {
         throw std::out_of_range("Matrix row index out of range");
     }
+    if (col > 2) {
+        throw std::out_of_range("Matrix column index out of range");
+    }
 
-    return this->m_rows[index];
+    return this->m_data[row * 3 + col];
 }
 
-const evspace::MatrixRow& evspace::Matrix::operator[](std::size_t index) const {
-    if (index > 2) {
+const double& evspace::Matrix::operator()(std::size_t row, std::size_t col) const {
+    if (row > 2) {
         throw std::out_of_range("Matrix row index out of range");
     }
+    if (col > 2) {
+        throw std::out_of_range("Matrix column index out of range");
+    }
 
-    return this->m_rows[index];
+    return this->m_data[row * 3 + col];
 }
 
 std::ostream& operator<<(std::ostream& out, const evspace::Matrix& matrix) {
-    out << "[ [ " << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << " ], [ "
-        << matrix[1][0] << ", " << matrix[1][1] << ", " << matrix[1][2] << " ], [ "
-        << matrix[2][0] << ", " << matrix[2][1] << ", " << matrix[2][2] << " ] ]";
+    // out << "[ [ " << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << " ], [ "
+    //     << matrix[1][0] << ", " << matrix[1][1] << ", " << matrix[1][2] << " ], [ "
+    //     << matrix[2][0] << ", " << matrix[2][1] << ", " << matrix[2][2] << " ] ]";
+    out << "[ [ " << matrix(0, 0) << ", " << matrix(0, 1) << ", " << matrix(0, 2) << " ], [ "
+        << matrix(1, 0) << ", " << matrix(1, 1) << ", " << matrix(1, 2) << " ], [ "
+        << matrix(2, 0) << ", " << matrix(2, 1) << ", " << matrix(2, 2) << " ] ]";
     return out;
 }
 
@@ -291,7 +226,8 @@ bool evspace::Matrix::operator!=(const Matrix& rhs) const {
 }
 
 bool evspace::Matrix::is_valid() const {
-    return (this->m_data != NULL && this->m_rows != NULL);
+    // return (this->m_data != NULL && this->m_rows != NULL);
+    return (this->m_data != NULL);
 }
 
 double evspace::Matrix::determinate() const {

@@ -19,30 +19,10 @@ namespace evspace {
 
     class Vector;
 
-    //  MatrixRow just wraps around a block of memory from a Matrix array row.
-    //  MatrixRow is not responsible for deleting any memory.
-    class EVSPACE_API MatrixRow {
-    protected:
-        double* m_data;
-    public:
-        MatrixRow() = delete;
-        MatrixRow(double*) noexcept;
-        MatrixRow(const MatrixRow&) noexcept;
-        MatrixRow(MatrixRow&&) noexcept;
-        
-        MatrixRow& operator=(const MatrixRow&) noexcept;
-        MatrixRow& operator=(MatrixRow&&) noexcept;
-
-        double& operator[](std::size_t);
-        const double& operator[](std::size_t) const;
-    };
-
     class EVSPACE_API Matrix {
     protected:
         double* m_data;
-        MatrixRow* m_rows;
-
-        void set_rows() EVSPACE_NOEXCEPT;
+        
         double _compute_cofactor_element(size_t, size_t, double) const;
     public:
         Matrix() EVSPACE_NOEXCEPT;
@@ -56,8 +36,8 @@ namespace evspace {
         Matrix& operator=(const Matrix&);
         Matrix& operator=(Matrix&&) noexcept;
 
-        MatrixRow& operator[](std::size_t);
-        const MatrixRow& operator[](std::size_t) const;
+        double& operator()(std::size_t, std::size_t);
+        const double& operator()(std::size_t, std::size_t) const;
 
         friend std::ostream& ::operator<<(std::ostream&, const Matrix&);
 
@@ -102,9 +82,6 @@ namespace evspace {
         std::memcpy(this->m_data, std::data(array[0]), 3 * sizeof(double));
         std::memcpy(this->m_data + 3, std::data(array[1]), 3 * sizeof(double));
         std::memcpy(this->m_data + 6, std::data(array[2]), 3 * sizeof(double));
-
-        //this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
-        this->set_rows();
     }
 
     template<>
@@ -118,9 +95,6 @@ namespace evspace {
                 this->m_data[i * 3 + j] = static_cast<double>(row[j]);
             }
         }
-
-        //this->m_rows = new MatrixRow[3]{ this->m_data, this->m_data + 3, this->m_data + 6 };
-        this->set_rows();
     }
 
 } // namespace evspace
