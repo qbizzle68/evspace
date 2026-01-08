@@ -4,6 +4,7 @@ CXX_STD := c++17
 # BUILD_SHARED := FALSE
 # EVSPACE_CONSTRUCTOR_THROW := TRUE
 
+$(info Compiling with -std=$(CXX_STD))
 GXX = g++
 CXXFLAGS_COMMON = -Wall -std=$(CXX_STD) -Iinclude
 ifdef BUILD_SHARED
@@ -12,9 +13,9 @@ endif
 ifdef EVSPACE_CONSTRUCTOR_NOTHROW
 CXXFLAGS_COMMON += -DEVSPACE_CONSTRUCTOR_NOTHROW
 endif
-CXXFLAGS_RELEASE = $(CXXFLAGS_COMMON) -O3 -DNDEBUG
+CXXFLAGS_RELEASE = $(CXXFLAGS_COMMON) -O3 -march=native -DNDEBUG
 CXXFLAGS_DEBUG = $(CXXFLAGS_COMMON) -g -DDEBUG
-CXXFLAGS_PROFILE = $(CXXFLAGS_COMMON) -O3 -pg
+CXXFLAGS_PROFILE = $(CXXFLAGS_COMMON) -O3 -march=native -pg
 CXXFLAGS_TEST = $(CXXFLAGS_DEBUG)
 GTEST_FLAGS = $(shell pkg-config --cflags gtest_main)
 GTEST_LIBS = $(shell pkg-config --libs gtest_main)
@@ -28,7 +29,7 @@ TEST_DIR = $(BUILD_DIR)/test
 TEST_SRC_DIR = tests
 
 # Sources files
-LIB_SOURCES = angles.cpp matrix.cpp rotation.cpp vector.cpp
+LIB_SOURCES = angles.cpp matrix.cpp rotation.cpp
 TEST_SOURCES = $(shell ls tests | grep '.cpp' | tr '\n' ' ')
 
 # Object files

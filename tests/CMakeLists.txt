@@ -60,6 +60,6 @@ include(GoogleTest)
 gtest_discover_tests(evspace_unit_testing)
 
 target_precompile_headers(evspace_unit_testing PRIVATE
-    <input_pch.hpp>
+    <helpers.hpp>
     <cmath>
 )

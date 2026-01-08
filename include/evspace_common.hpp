@@ -32,5 +32,17 @@
 #   define EVSPACE_RESTRUCT
 #endif
 
+// Can only safely use constexpr in our cases on C++20 and up
+#if __cplusplus >= 202002L
+#   define EVSPACE_CONSTEXPR constexpr
+#else
+#   define EVSPACE_CONSTEXPR
+#endif
+
+#if __cplusplus > 202302L
+#   define EVSPACE_CONSTEXPR26 constexpr
+#else
+#   define EVSPACE_CONSTEXPR26
+#endif
 
 #endif // _EVS_COMMON_H_

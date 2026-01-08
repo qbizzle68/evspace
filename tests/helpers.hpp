@@ -37,13 +37,13 @@
 
 #define COMPARE_VECTOR(vec, ans, msg) \
     EXPECT_DOUBLE_EQ(vec[0], ans[0]) << msg << " at index 0"; \
-    EXPECT_DOUBLE_EQ(vec[1], ans[1]) << msg << " at index 0"; \
-    EXPECT_DOUBLE_EQ(vec[2], ans[2]) << msg << " at index 0"
+    EXPECT_DOUBLE_EQ(vec[1], ans[1]) << msg << " at index 1"; \
+    EXPECT_DOUBLE_EQ(vec[2], ans[2]) << msg << " at index 2"
 
 #define COMPARE_VECTOR_NEAR(vec, ans, msg, error) \
     EXPECT_NEAR(vec[0], ans[0], error) << msg << " at index 0"; \
-    EXPECT_NEAR(vec[1], ans[1], error) << msg << " at index 0"; \
-    EXPECT_NEAR(vec[2], ans[2], error) << msg << " at index 0"
+    EXPECT_NEAR(vec[1], ans[1], error) << msg << " at index 1"; \
+    EXPECT_NEAR(vec[2], ans[2], error) << msg << " at index 2"
 
 // Error for EXPECT_NEAR assertions.
 constexpr double ABS_ERROR = 1e-10;

@@ -9,7 +9,6 @@ endif()
 
 add_library(evspace ${BUILD_TYPE}
     "angles.cpp"
-    "vector.cpp"
     "matrix.cpp"
     "rotation.cpp"
 )
