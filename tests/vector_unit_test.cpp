@@ -49,6 +49,23 @@ TEST(VectorUnitTest, TestConstruction) {
     EXPECT_EQ(vector_assigned[2], 3.0) << "Move assignment operator invalid z-component";
 }
 
+TEST(VectorUnitTest, TestCommaInitialization) {
+    Vector vector;
+    vector << 1, 2, 3;
+    EXPECT_EQ(vector[0], 1.0) << "Comma initialization failed for x-component";
+    EXPECT_EQ(vector[1], 2.0) << "Comma initialization failed for y-component";
+    EXPECT_EQ(vector[2], 3.0) << "Comma initialization failed for z-component";
+
+    vector = Vector();
+    vector << 4, 5;
+    EXPECT_EQ(vector[0], 4.0) << "Comma initialization failed for x-component";
+    EXPECT_EQ(vector[1], 5.0) << "Comma initialization failed for y-component";
+    EXPECT_EQ(vector[2], 0.0) << "Comma initialization failed for z-component";
+
+    EXPECT_THROW((vector << 1, 2, 3, 4), std::out_of_range) 
+        << "Comma initialization with too manny values";
+}
+
 TEST(VectorUnitTest, TestElementaryVectors) {
     EXPECT_EQ(Vector::e1[0], 1.0) << "e1 elementary vector x component not 1.0";
     EXPECT_EQ(Vector::e1[1], 0.0) << "e1 elementary vector y component not 0.0";

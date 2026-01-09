@@ -7,6 +7,7 @@
 #include <cmath>        // std::sqrt, std::acos
 #include <evspace_common.hpp>
 #include <matrix.hpp>
+#include <comma_operator.hpp>
 
 // forward declaration for global friend function signature (below function)
 namespace evspace { class Vector; }
@@ -15,6 +16,8 @@ namespace evspace { class Vector; }
 EVSPACE_API std::ostream& operator<<(std::ostream& out, const evspace::Vector& vector);
 
 namespace evspace {
+
+    class Matrix;
 
     // Represent vector from a three dimensional vector space. The dimension
     // is strictly three, making the class highly optimizable for computational
@@ -33,6 +36,27 @@ namespace evspace {
         scalar_projection(const Vector& v1, const Vector& v2) noexcept;
 
     public:
+
+        // Helper class that provides support for comma operator
+        // initialization. This type is returned by operator<<
+        // overload and chained to support initialization via
+        // comma separated values.
+        class CommaInitializerV : public CommaInitializer<Vector> {
+        private:
+            double& get_component(const std::size_t index) {
+                if (index >= 3) {
+                    throw std::out_of_range("Too many values provided "
+                                            "in comma initialization");
+                }
+                return this->ref[index];
+            }
+        public:
+            CommaInitializerV(Vector& v, double first)
+                : CommaInitializer(v, first) {
+                this->get_component(0) = first;
+            }
+        };
+
         EVSPACE_CONSTEXPR Vector() EVSPACE_NOEXCEPT;
         EVSPACE_CONSTEXPR Vector(double, double, double) EVSPACE_NOEXCEPT;
         EVSPACE_CONSTEXPR Vector(const Vector&) EVSPACE_NOEXCEPT;
@@ -49,6 +73,7 @@ namespace evspace {
         // Vector whose components are a, b, and c would print the string
         // "[ a, b, c ]".
         friend std::ostream& ::operator<<(std::ostream&, const Vector&);
+        CommaInitializerV operator<<(double value);
 
         EVSPACE_CONSTEXPR Vector operator+(const Vector&) const EVSPACE_NOEXCEPT;
         constexpr Vector& operator+=(const Vector&) noexcept;
@@ -146,14 +171,18 @@ namespace evspace {
         this->m_data = move.m_data;
         move.m_data = NULL;
     }
-
+    
     inline EVSPACE_CONSTEXPR Vector::~Vector() {
         delete[] this->m_data;
     }
-
+    
     inline constexpr Vector& Vector::operator=(const Vector& cpy) {
         set_array(this->m_data, VECTOR_X(cpy), VECTOR_Y(cpy), VECTOR_Z(cpy));
         return* this;
+    }
+
+    inline Vector::CommaInitializerV Vector::operator<<(double value) {
+        return Vector::CommaInitializerV(*this, value);
     }
 
     inline constexpr Vector& Vector::operator=(Vector&& move) noexcept {
