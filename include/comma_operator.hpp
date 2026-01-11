@@ -24,7 +24,7 @@ namespace evspace {
         // derived class must handle setting the first value of the
         // object being initialized. For example:
         // this->get_component(0) = first.
-        CommaInitializer(T& ref, double first) : index(1), ref(ref) {
+        CommaInitializer(T& ref, [[maybe_unused]] double first) : index(1), ref(ref) {
             // this->index is initialized to 1 as the derived class's
             // constructor handles setting the first value.
         }
