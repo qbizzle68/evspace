@@ -6,7 +6,6 @@
 #include <stdexcept>    // std::out_of_range
 #include <cmath>        // std::sqrt, std::acos
 #include <evspace_common.hpp>
-#include <matrix.hpp>
 #include <comma_operator.hpp>
 
 // forward declaration for global friend function signature (below function)
@@ -132,6 +131,12 @@ namespace evspace {
         static const Vector e2;
         static const Vector e3;
     };
+
+}   // namespace evspace
+
+#include <matrix.hpp>
+
+namespace evspace {
 
     EVSPACE_API constexpr double vector_dot(const Vector&, const Vector&) noexcept;
     EVSPACE_API EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);

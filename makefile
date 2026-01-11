@@ -29,8 +29,9 @@ TEST_DIR = $(BUILD_DIR)/test
 TEST_SRC_DIR = tests
 
 # Sources files
-LIB_SOURCES = angles.cpp matrix.cpp rotation.cpp
-TEST_SOURCES = $(shell ls tests | grep '.cpp' | tr '\n' ' ')
+LIB_SOURCES = angles.cpp rotation.cpp
+LIB_HEADERS := $(wildcard include/*.hpp)
+TEST_SOURCES = vector_unit_test.cpp matrix_unit_test.cpp
 
 # Object files
 LIB_OBJ_RELEASE = $(LIB_SOURCES:%.cpp=$(RELEASE_DIR)/%.o)
@@ -78,7 +79,7 @@ $(PROFILE_DIR)/%.o: src/%.cpp | $(PROFILE_DIR)
 test: $(TEST_BIN)
 	./$(TEST_BIN)
 
-$(TEST_BIN): $(TEST_OBJ) | $(TEST_DIR) $(DEBUG_LIB)
+$(TEST_BIN): $(TEST_OBJ) $(LIB_HEADERS) | $(TEST_DIR) $(DEBUG_LIB)
 	$(CXX) $(CXXFLAGS_TEST) $(GTEST_FLAGS) $^ $(GTEST_LIBS) -Iinclude -L$(DEBUG_DIR) -levspace -o $@
 
 $(TEST_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp | $(TEST_DIR)

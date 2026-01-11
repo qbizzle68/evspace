@@ -15,13 +15,6 @@ using namespace evspace;
 
 class MatrixUnitTest : public testing::Test {
 protected:
-    /*const Matrix matrix_default;
-    const Matrix matrix_123;
-    const double array_123[3][3] = { {1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0} };
-    const double array_246[3][3] = { {2.0, 4.0, 6.0}, {8.0, 10.0, 12.0}, {14.0, 16.0, 18.0} };
-
-    MatrixUnitTest() : matrix_default(Matrix()),
-        matrix_123(Matrix({ {1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0} })) { }*/
     Matrix lhs, rhs, result;
     MatrixArray answer;
     const MatrixArray array_123 = create_array({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
@@ -53,6 +46,58 @@ TEST_F(MatrixUnitTest, TestCreation) {
     result = Matrix(array_123);
     COMPARE_MATRIX(result, array_123, "Matrix construction from std::array error");
 
+    // flat containers (both int and double)
+    std::vector<double> cvector_d{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    result = Matrix(cvector_d);
+    answer = create_array({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+    COMPARE_MATRIX(result, answer, "Matrix construction from std::vector (flat double)");
+    std::vector<int> cvector_l{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    result = Matrix(cvector_l);
+    COMPARE_MATRIX(result, answer, "Matrix construction from std::vector (flat int)");
+    cvector_d.pop_back();
+    EXPECT_THROW(result = Matrix(cvector_d), std::out_of_range)
+        << "Matrix construction from flat container with < 9 elements";
+    cvector_d.push_back(9);
+    cvector_d.push_back(10);
+    EXPECT_THROW(result = Matrix(cvector_d), std::out_of_range)
+        << "Matrix construction from flat container with > 9 elements";
+
+    // folded containers (both int and double)
+    std::vector<std::vector<double>> cvector_fd{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    result = Matrix(cvector_fd);
+    COMPARE_MATRIX(result, answer, "Matrix construction from std::vector (folded double)");
+    cvector_fd.push_back(std::vector<double>{1, 2, 3});
+    EXPECT_THROW(result = Matrix(cvector_fd), std::out_of_range)
+        << "Matrix construction from folded double container with > 3 rows";
+    cvector_fd.pop_back();
+    cvector_fd.pop_back();
+    EXPECT_THROW(result = Matrix(cvector_fd), std::out_of_range)
+        << "Matrix construction from folded double container with < 3 rows";
+    cvector_fd.push_back(std::vector<double>{1, 2});
+    EXPECT_THROW(result = Matrix(cvector_fd), std::out_of_range)
+        << "Matrix construction from folded double container with < 3 columns";
+    cvector_fd.pop_back();
+    cvector_fd.push_back(std::vector<double>{1, 2, 3, 4});
+    EXPECT_THROW(result = Matrix(cvector_fd), std::out_of_range)
+        << "Matrix construction from folded double container with > 3 columns";
+    std::vector<std::vector<int>> cvector_ld{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    result = Matrix(cvector_ld);
+    COMPARE_MATRIX(result, answer, "Matrix construction from std::vector (folded int)");
+    cvector_ld.push_back(std::vector<int>{1, 2, 3});
+    EXPECT_THROW(result = Matrix(cvector_ld), std::out_of_range)
+        << "Matrix construction from folded int container with > 3 rows";
+    cvector_ld.pop_back();
+    cvector_ld.pop_back();
+    EXPECT_THROW(result = Matrix(cvector_ld), std::out_of_range)
+        << "Matrix construction from folded int container with < 3 rows";
+    cvector_ld.push_back(std::vector<int>{1, 2});
+    EXPECT_THROW(result = Matrix(cvector_ld), std::out_of_range)
+        << "Matrix construction from folded int container with < 3 columns";
+    cvector_ld.pop_back();
+    cvector_ld.push_back(std::vector<int>{1, 2, 3, 4});
+    EXPECT_THROW(result = Matrix(cvector_ld), std::out_of_range)
+        << "Matrix construction from folded int container with > 3 columns";
+
     // copy constructor
     lhs = Matrix({ {1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9} });
     result = Matrix(lhs);
@@ -75,6 +120,24 @@ TEST_F(MatrixUnitTest, TestCreation) {
     tmp = Matrix({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
     lhs = std::move(tmp);
     COMPARE_MATRIX(lhs, array_123, "Matrix move assignment operator error");
+}
+
+TEST_F(MatrixUnitTest, TestCommaInitialization) {
+    Matrix matrix;
+    matrix << 1, 2, 3,
+              4, 5, 6,
+              7, 8, 9;
+    answer = create_array({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+    COMPARE_MATRIX(matrix, answer, "Matrix comma initialization error");
+
+    matrix = Matrix();
+    matrix << 1, 2, 3, 4, 5, 6, 7, 8;
+    answer = create_array({ {1, 2, 3}, {4, 5, 6}, {7, 8, 0} });
+    COMPARE_MATRIX(matrix, answer, "Matrix initialization error");
+
+    EXPECT_THROW((
+        matrix << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    ), std::out_of_range);
 }
 
 TEST_F(MatrixUnitTest, TestIndexSetter) {
@@ -160,6 +223,19 @@ TEST_F(MatrixUnitTest, TestMathOperators) {
     result = lhs;
     result *= rhs;
     _COMPARE_MATRIX_NEAR(result, answer, "Matrix multiplication assignment operator error");
+
+    result << 1.0, 0.0, 0.0,
+              0.0, 0.0707372016677029, -0.9974949866040544,
+              0.0, 0.9974949866040544, 0.0707372016677029;
+    answer = create_array({
+        {1.0, 0.0, 0.0},
+        {0.0, 0.0707372016677029, 0.9974949866040544},
+        {0.0, -0.9974949866040544, 0.0707372016677029}
+    });
+    _COMPARE_MATRIX_NEAR(result.inverse(), answer, "Matrix inverse error");
+    answer = create_array({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
+    _COMPARE_MATRIX_NEAR((result.inverse() * result), answer,
+        "Matrix inverse check error");
 }
 
 TEST_F(MatrixUnitTest, TestMatrixComparison) {
