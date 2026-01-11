@@ -3,7 +3,8 @@
 
 #include <axis.hpp>
 #include <evspace_common.hpp>
-#include <cstddef>  // std::size_t
+#include <cstddef>      // std::size_t
+#include <stdexcept>    // std::out_of_range
 
 namespace evspace {
 
@@ -30,14 +31,14 @@ namespace evspace {
     typedef RotationOrder<ZAxis, XAxis, ZAxis> ZXZ;
     typedef RotationOrder<ZAxis, YAxis, ZAxis> ZYZ;
 
-    class EVSPACE_API EulerAngles {
+    class EulerAngles {
     private:
         double m_values[3];
 
     public:
-        EulerAngles();
-        EulerAngles(double, double, double);
-        EulerAngles(const EulerAngles&);
+        constexpr EulerAngles() noexcept;
+        constexpr EulerAngles(double, double, double) noexcept;
+        constexpr EulerAngles(const EulerAngles&) noexcept;
 
         EulerAngles& operator=(const EulerAngles&) = default;
 
@@ -45,6 +46,33 @@ namespace evspace {
         const double& operator[](std::size_t) const;
     };
 
+    inline constexpr
+    EulerAngles::EulerAngles() noexcept : m_values{ 0.0, 0.0, 0.0 } { }
+
+    inline constexpr
+    EulerAngles::EulerAngles(double alpha, double beta, double gamma) noexcept
+        : m_values{ alpha, beta, gamma } { }
+    
+    inline constexpr
+    EulerAngles::EulerAngles(const EulerAngles& cpy) noexcept
+        : m_values{ cpy.m_values[0], cpy.m_values[1], cpy.m_values[2] } { }
+
+    inline double& EulerAngles::EulerAngles::operator[](std::size_t index) {
+        if (index > 2) {
+            throw std::out_of_range("Angle index out of range");
+        }
+
+        return this->m_values[index];
+    }
+
+    inline const double&
+    EulerAngles::EulerAngles::operator[](std::size_t index) const {
+        if (index > 2) {
+            throw std::out_of_range("Angle index out of range");
+        }
+
+        return this->m_values[index];
+    }
 }
 
 #endif // _EVSPACE_ANGLES_H_

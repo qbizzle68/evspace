@@ -32,7 +32,7 @@ namespace evspace {
     struct ExtrinsicRotation : RotationType { };
 
     // Internal variable for fuction default
-    const Vector _zero_vector = Vector(0.0, 0.0, 0.0);
+    inline const Vector _zero_vector = Vector(0.0, 0.0, 0.0);
 
     template<typename _rotation_order, typename _rotation_type=IntrinsicRotation>
     class ReferenceFrame {
@@ -75,7 +75,22 @@ namespace evspace {
     template<typename axis>
     Matrix compute_rotation_matrix(double);
 
-    EVSPACE_API Matrix compute_rotation_matrix(double angle, const Vector&);
+    // Computes the rotation matrix for a rotation of angle around
+    // the vector rotation_vector.
+    inline Matrix
+    compute_rotation_matrix(double angle, const Vector& rotation_vector) {
+        Vector vector_normal = rotation_vector.norm();
+        Matrix w = Matrix(
+            {
+                { 0.0, -vector_normal[2], vector_normal[1] },
+                { vector_normal[2], 0.0, -vector_normal[0] },
+                { -vector_normal[1], vector_normal[0], 0.0 }
+            }
+        );
+
+        return Matrix::IDENTITY + (w * std::sin(angle)) +
+            (w * w * (1 - std::cos(angle)));
+    }
 
     template<typename rotation_order, typename rotation_type = IntrinsicRotation>
     Matrix compute_rotation_matrix(const EulerAngles&);
@@ -127,28 +142,66 @@ namespace evspace {
      *  frames are treated the same in the intermediate steps.
      */
 
-        EVSPACE_API inline Vector _rotate_from_exec(const Matrix& matrix, const Vector& vector) {
+        inline Vector _rotate_from_exec(const Matrix& matrix, const Vector& vector) {
             return matrix * vector;
         }
 
-        EVSPACE_API inline Vector _rotate_to_exec(const Matrix& matrix, const Vector& vector) {
+        inline Vector _rotate_to_exec(const Matrix& matrix, const Vector& vector) {
             return vector * matrix;
         }
 
-        EVSPACE_API inline Vector _rotate_from_exec(const Matrix& matrix, const Vector& vector, const Vector& offset) {
+        inline Vector _rotate_from_exec(const Matrix& matrix, const Vector& vector, const Vector& offset) {
             return (matrix * vector) + offset;
         }
 
-        EVSPACE_API inline Vector _rotate_to_exec(const Matrix& matrix, const Vector& vector, const Vector& offset) {
+        inline Vector _rotate_to_exec(const Matrix& matrix, const Vector& vector, const Vector& offset) {
             return (vector - offset) * matrix;
         }
 
     }
 
-    EVSPACE_API Vector rotate_from(const Matrix&, const Vector&);
-    EVSPACE_API Vector rotate_from(const Matrix&, const Vector&, const Vector&);
-    EVSPACE_API Vector rotate_to(const Matrix&, const Vector&);
-    EVSPACE_API Vector rotate_to(const Matrix&, const Vector&, const Vector&);
+    // fixme: should these handle rotating reference frames?
+
+    // Rotates vector to an inertial reference frame from a reference frame
+    // defined by rotation_matrix. The inertial reference frame here assumes
+    // the frame being rotated from is simply relative to the frame being
+    // rotated to. The frame being rotated to need not be a literal inertial
+    // frame.
+    inline Vector
+    rotate_from(const Matrix& rotation_matrix, const Vector& vector) {
+        return _rotation_exec::_rotate_from_exec(rotation_matrix, vector);
+    }
+
+    // Rotates vector to an inertial reference frame from a reference frame
+    // defined by rotation_matrix and adjusting for an offset which is defined
+    // in the basis of the frame being rotated to (the inertial frame).
+    // The inertial reference frame here assumes the frame being rotated from
+    // is simply relative to the frame being rotated to. The frame being rotated
+    // to need not be a literal inertial frame.
+    inline Vector
+    rotate_from(const Matrix& rotation_matrix, const Vector& vector, const Vector& offset) {
+        return _rotation_exec::_rotate_from_exec(rotation_matrix, vector, offset);
+    }
+
+    // Rotates vector to a reference frame defined by rotation_matrix from
+    // an inertial reference frame. The inertial reference frame here assumes
+    // the frame being rotated to is simply relative to the frame being rotated
+    // from. The frame being rotated from need not be a literal inertial frame.
+    inline Vector
+    rotate_to(const Matrix& rotation_matrix, const Vector& vector) {
+        return _rotation_exec::_rotate_to_exec(rotation_matrix, vector);
+    }
+
+    // Rotates vector to a reference frame defined by rotation_matrix from
+    // an inertial reference frame and adjusting for an offset which is defined
+    // in the basis of the frame being rotated from (the inertial frame).
+    // The inertial reference frame here assumes the frame being rotated from
+    // is simply relative to the frame being rotated from. The frame being rotated
+    // from need not be a literal inertial frame.
+    inline Vector
+    rotate_to(const Matrix& rotation_matrix, const Vector& vector, const Vector& offset) {
+        return _rotation_exec::_rotate_to_exec(rotation_matrix, vector, offset);
+    }
 
     template<typename axis>
     Vector rotate_from(double, const Vector&);

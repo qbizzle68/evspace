@@ -20,13 +20,13 @@
 // forward declaration for use in global function declaration signature
 namespace evspace { class Matrix; }
 // non-local declaration for friend function
-EVSPACE_API std::ostream& operator<<(std::ostream&, const evspace::Matrix&);
+std::ostream& operator<<(std::ostream&, const evspace::Matrix&);
 
 namespace evspace {
 
     class Vector;
 
-    class EVSPACE_API Matrix {
+    class Matrix {
     protected:
         double* m_data;
         

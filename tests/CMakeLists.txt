@@ -25,6 +25,7 @@ if(${NEED_GTEST})
     FetchContent_MakeAvailable(googletest)
 endif()
 
+enable_testing()
 add_executable(evspace_unit_testing
     "angles_unit_test.cpp"
     "vector_unit_test.cpp"
@@ -38,22 +39,8 @@ target_include_directories(evspace_unit_testing PRIVATE
     "${evspace_library_SOURCE_DIR}/include"
 )
 
-if(BUILD_SHARED)
-    target_compile_definitions(evspace_unit_testing PRIVATE EVSPACE_SHARED_LIB)
-
-    # this solves the nightmare of test executable unable to link with the evspace dll on windows
-    if (WIN32)
-        add_custom_command(
-            TARGET evspace_unit_testing POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:evspace_unit_testing> $<TARGET_FILE_DIR:evspace_unit_testing>
-            COMMAND_EXPAND_LISTS
-        )
-    endif ()
-endif()
-
 target_link_libraries(evspace_unit_testing
     GTest::gtest_main
-    evspace
 )
 
 include(GoogleTest)
@@ -63,3 +50,5 @@ target_precompile_headers(evspace_unit_testing PRIVATE
     <helpers.hpp>
     <cmath>
 )
+
+add_test(NAME evspace_test_suite COMMAND evspace_tests)

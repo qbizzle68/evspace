@@ -12,7 +12,7 @@
 namespace evspace { class Vector; }
 
 // friend declaration must first be non-local to evspace::Vector (i.e. global namespace)
-EVSPACE_API std::ostream& operator<<(std::ostream& out, const evspace::Vector& vector);
+std::ostream& operator<<(std::ostream& out, const evspace::Vector& vector);
 
 namespace evspace {
 
@@ -21,7 +21,7 @@ namespace evspace {
     // Represent vector from a three dimensional vector space. The dimension
     // is strictly three, making the class highly optimizable for computational
     // efficiency. 
-    class EVSPACE_API Vector {
+    class Vector {
     protected:
         double* m_data;
 
@@ -119,11 +119,11 @@ namespace evspace {
         // the direction of the calling Vector.
         EVSPACE_CONSTEXPR26 Vector norm() const;
 
-        EVSPACE_API friend constexpr double vector_dot(const Vector&, const Vector&) noexcept;
-        EVSPACE_API friend EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
-        EVSPACE_API friend EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
-        EVSPACE_API friend EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
-        EVSPACE_API friend EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
+        friend constexpr double vector_dot(const Vector&, const Vector&) noexcept;
+        friend EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
+        friend EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
+        friend EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
+        friend EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
 
         friend class Matrix;
 
@@ -138,13 +138,13 @@ namespace evspace {
 
 namespace evspace {
 
-    EVSPACE_API constexpr double vector_dot(const Vector&, const Vector&) noexcept;
-    EVSPACE_API EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
-    EVSPACE_API EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
-    EVSPACE_API EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
-    EVSPACE_API EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
+    constexpr double vector_dot(const Vector&, const Vector&) noexcept;
+    EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
+    EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
+    EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
+    EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
 
-    EVSPACE_API EVSPACE_CONSTEXPR Vector operator*(double scalar, const Vector& vector);
+    EVSPACE_CONSTEXPR Vector operator*(double scalar, const Vector& vector);
 
     #define VECTOR_X(v) (v).m_data[0]
     #define VECTOR_Y(v) (v).m_data[1]
