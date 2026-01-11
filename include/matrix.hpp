@@ -459,7 +459,7 @@ namespace evspace {
             for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
                 double sum = 0;
                 for (int k = 0; k < MATRIX_ROW_LENGTH; k++) {
-                    sum = std::fma(tmp[i * MATRIX_ROW_LENGTH + k], tmp[k * MATRIX_ROW_LENGTH + j], sum);
+                    sum = std::fma(tmp[i * MATRIX_ROW_LENGTH + k], rhs.matrix_item(k, j), sum);
                 }
                 this->matrix_item(i, j) = sum;
             }
