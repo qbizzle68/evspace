@@ -11,7 +11,6 @@
 #include <algorithm>    // std::copy
 #include <ostream>      // std::ostream
 #include <type_traits>
-#include <array>
 
 #define MATRIX_ARRAY_LENGTH     9
 #define MATRIX_ROW_LENGTH       3
@@ -224,9 +223,7 @@ namespace evspace {
             }
             else {
                 for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
-                    //this->m_data[this->matrix_index(i, j)] = static_cast<double>(c[i][j]);
                     MATRIX_ITEM_THIS(i, j) = static_cast<double>(c[i][j]);
-                    //this->matrix_item(i, j) = static_cast<double>(c[i][j]);
                 }
             }
         }
@@ -260,8 +257,6 @@ namespace evspace {
         else {
             for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
                 for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
-                    //this->matrix_item(i, j) = static_cast<double>(arr[i][j]);
-                    //this->m_data[this->matrix_index(i, j)] = static_cast<double>(arr[i][j]);
                     MATRIX_ITEM_THIS(i, j) = static_cast<double>(arr[i][j]);
                 }
             }
@@ -319,18 +314,13 @@ namespace evspace {
     }
     
     inline Matrix& Matrix::operator=(const Matrix& rhs) {
-        for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
-            this->m_data[i] = rhs.m_data[i];
-        }
+        std::memcpy(this->m_data, rhs.m_data, MATRIX_BYTE_SIZE);
 
         return *this;
     }
 
     inline Matrix& Matrix::operator=(Matrix&& rhs) noexcept {
-        double* tmp = this->m_data;
-
-        this->m_data = rhs.m_data;
-        rhs.m_data = tmp;
+        std::swap(this->m_data, rhs.m_data);
 
         return *this;
     }
@@ -344,8 +334,6 @@ namespace evspace {
             throw std::out_of_range("Matrix column index out of range");
         }
 
-        //return this->matrix_item(row, col);
-        //return this->m_data[this->matrix_index(row, col)];
         return MATRIX_ITEM_THIS(row, col);
     }
 
@@ -358,8 +346,6 @@ namespace evspace {
             throw std::out_of_range("Matrix column index out of range");
         }
 
-        //return this->matrix_item(row, col);
-        //return this->m_data[this->matrix_index(row, col)];
         return MATRIX_ITEM_THIS(row, col);
     }
     
@@ -433,7 +419,6 @@ namespace evspace {
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
             double sum = 0;
             for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
-                //sum = std::fma(this->matrix_item(i, j), vec.m_data[j], sum);
                 sum = std::fma(MATRIX_ITEM_THIS(i, j), vec.m_data[j], sum);
             }
             result.m_data[i] = sum;
@@ -449,11 +434,8 @@ namespace evspace {
             for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
                 double sum = 0;
                 for (int k = 0; k < MATRIX_ROW_LENGTH; k++) {
-                    //sum = std::fma(this->matrix_item(i, k), rhs.matrix_item(k, j), sum);
                     sum = std::fma(MATRIX_ITEM_THIS(i, k), MATRIX_ITEM(rhs, k, j), sum);
                 }
-                //result.matrix_item(i, j) = sum;
-                //result.m_data[result.matrix_index(i, j)] = sum;
                 MATRIX_ITEM(result, i, j) = sum;
             }
         }
@@ -462,22 +444,16 @@ namespace evspace {
     }
 
     inline Matrix& Matrix::operator*=(const Matrix& rhs) noexcept {
-        double tmp[9]{0};
-        for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
-            tmp[i] = rhs.m_data[i];
-        }
+        double tmp[9];
+        std::memcpy(tmp, rhs.m_data, MATRIX_BYTE_SIZE);
 
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
             for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
                 double sum = 0;
                 for (int k = 0; k < MATRIX_ROW_LENGTH; k++) {
-                    //sum = std::fma(tmp[i * MATRIX_ROW_LENGTH + k], rhs.matrix_item(k, j), sum);
                     sum = std::fma(tmp[i * MATRIX_ROW_LENGTH + k],
                                    MATRIX_ITEM(rhs, k, j), sum);
-                                   //rhs.m_data[rhs.matrix_index(k, j)], sum);
                 }
-                //this->matrix_item(i, j) = sum;
-                //this->m_data[this->matrix_index(i, j)] = sum;
                 MATRIX_ITEM_THIS(i, j) = sum;
             }
         }
@@ -524,26 +500,17 @@ namespace evspace {
     inline double Matrix::determinate() const noexcept {
         double result = 0;
 
-        /*result += this->matrix_item(0, 0) * (this->matrix_item(1, 1) * this->matrix_item(2, 2) - this->matrix_item(1, 2) * this->matrix_item(2, 1));
-        result -= this->matrix_item(0, 1) * (this->matrix_item(1, 0) * this->matrix_item(2, 2) - this->matrix_item(1, 2) * this->matrix_item(2, 0));
-        result += this->matrix_item(0, 2) * (this->matrix_item(1, 0) * this->matrix_item(2, 1) - this->matrix_item(1, 1) * this->matrix_item(2, 0));*/
-
         result += MATRIX_ITEM_THIS(0, 0) * (MATRIX_ITEM_THIS(1, 1) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 1));
+                  MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 1));
         result -= MATRIX_ITEM_THIS(0, 1) * (MATRIX_ITEM_THIS(1, 0) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0));
+                  MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0));
         result += MATRIX_ITEM_THIS(0, 2) * (MATRIX_ITEM_THIS(1, 0) * MATRIX_ITEM_THIS(2, 1) -
-            MATRIX_ITEM_THIS(1, 1) * MATRIX_ITEM_THIS(2, 0));
+                  MATRIX_ITEM_THIS(1, 1) * MATRIX_ITEM_THIS(2, 0));
 
         return result;
     }
 
     inline Matrix Matrix::transpose() const EVSPACE_NOEXCEPT {
-        /*const double arr[3][3]{
-            { this->matrix_item(0, 0), this->matrix_item(1, 0), this->matrix_item(2, 0) },
-            { this->matrix_item(0, 1), this->matrix_item(1, 1), this->matrix_item(2, 1) },
-            { this->matrix_item(0, 2), this->matrix_item(1, 2), this->matrix_item(2, 2) },
-        };*/
         return Matrix({
             { MATRIX_ITEM_THIS(0, 0), MATRIX_ITEM_THIS(1, 0), MATRIX_ITEM_THIS(2, 0) },
             { MATRIX_ITEM_THIS(0, 1), MATRIX_ITEM_THIS(1, 1), MATRIX_ITEM_THIS(2, 1) },
@@ -577,34 +544,24 @@ namespace evspace {
 
         Matrix result = Matrix();
 
-        //result.m_data[0] = (this->matrix_item(1, 1) * this->matrix_item(2, 2) - this->matrix_item(1, 2) * this->matrix_item(2, 1)) / det;
-        //result.m_data[1] = -(this->matrix_item(1, 0) * this->matrix_item(2, 2) - this->matrix_item(1, 2) * this->matrix_item(2, 0)) / det;
-        //result.m_data[2] = (this->matrix_item(1, 0) * this->matrix_item(2, 1) - this->matrix_item(1, 2) * this->matrix_item(2, 0)) / det;
-        //result.m_data[3] = -(this->matrix_item(0, 1) * this->matrix_item(2, 2) - this->matrix_item(0, 2) * this->matrix_item(2, 1)) / det;
-        //result.m_data[4] = (this->matrix_item(0, 0) * this->matrix_item(2, 2) - this->matrix_item(0, 2) * this->matrix_item(2, 0)) / det;
-        //result.m_data[5] = -(this->matrix_item(0, 0) * this->matrix_item(2, 1) - this->matrix_item(0, 1) * this->matrix_item(2, 0)) / det;
-        //result.m_data[6] = (this->matrix_item(0, 1) * this->matrix_item(1, 2) - this->matrix_item(0, 2) * this->matrix_item(1, 1)) / det;
-        //result.m_data[7] = -(this->matrix_item(0, 0) * this->matrix_item(1, 2) - this->matrix_item(0, 2) * this->matrix_item(1, 0)) / det;
-        //result.m_data[8] = (this->matrix_item(0, 0) * this->matrix_item(1, 1) - this->matrix_item(0, 1) * this->matrix_item(1, 0)) / det;
-
         result.m_data[0] = (MATRIX_ITEM_THIS(1, 1) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 1)) / det;
+                            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 1)) / det;
         result.m_data[1] = -(MATRIX_ITEM_THIS(1, 0) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
+                             MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
         result.m_data[2] = (MATRIX_ITEM_THIS(1, 0) * MATRIX_ITEM_THIS(2, 1) -
-            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
+                            MATRIX_ITEM_THIS(1, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
         result.m_data[3] = -(MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(2, 1)) / det;
+                             MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(2, 1)) / det;
         result.m_data[4] = (MATRIX_ITEM_THIS(0, 0) * MATRIX_ITEM_THIS(2, 2) -
-            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
+                            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(2, 0)) / det;
         result.m_data[5] = -(MATRIX_ITEM_THIS(0, 0) * MATRIX_ITEM_THIS(2, 1) -
-            MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(2, 0)) / det;
+                             MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(2, 0)) / det;
         result.m_data[6] = (MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(1, 2) -
-            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(1, 1)) / det;
+                            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(1, 1)) / det;
         result.m_data[7] = -(MATRIX_ITEM_THIS(0, 0) * MATRIX_ITEM_THIS(1, 2) -
-            MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(1, 0)) / det;
+                             MATRIX_ITEM_THIS(0, 2) * MATRIX_ITEM_THIS(1, 0)) / det;
         result.m_data[8] = (MATRIX_ITEM_THIS(0, 0) * MATRIX_ITEM_THIS(1, 1) -
-            MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(1, 0)) / det;
+                            MATRIX_ITEM_THIS(0, 1) * MATRIX_ITEM_THIS(1, 0)) / det;
         
         result.transpose_inplace();
         return result;
@@ -620,11 +577,6 @@ namespace evspace {
 } // namespace evspace
 
 inline std::ostream& operator<<(std::ostream& out, const evspace::Matrix& matrix) {
-    /*out << "[ [ "
-        << matrix.matrix_item(0, 0) << ", " << matrix.matrix_item(0, 1) << ", " << matrix.matrix_item(0, 2) << " ], [ "
-        << matrix.matrix_item(1, 0) << ", " << matrix.matrix_item(1, 1) << ", " << matrix.matrix_item(1, 2) << " ], [ "
-        << matrix.matrix_item(2, 0) << ", " << matrix.matrix_item(2, 1) << ", " << matrix.matrix_item(2, 2) << " ] ]";
-    return out;*/
     out << "[ [ "
         << MATRIX_ITEM(matrix, 0, 0) << ", " << MATRIX_ITEM(matrix, 0, 1) << ", "
         << MATRIX_ITEM(matrix, 0, 2) << " ], [ "
