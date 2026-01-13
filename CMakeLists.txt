@@ -1,9 +1,10 @@
 ﻿cmake_minimum_required (VERSION 3.23)
 
 project ("evspace_library")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED, ON)
 include(CTest)
+message(STATUS "Building with CXX ${CMAKE_CXX_STANDARD} standard")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     message(STATUS "GCC detected, adding compile flags")
