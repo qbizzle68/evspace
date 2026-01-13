@@ -31,7 +31,7 @@ namespace evspace {
         // equal to the fraction of v1's projection relative to v2's
         // magnitude. This is equal to |v1| * cos(theta) / |v2| where
         // theta is the angle between v1 and v2.
-        inline constexpr static double
+        inline static double
         scalar_projection(const Vector& v1, const Vector& v2) noexcept;
 
     public:
@@ -56,17 +56,17 @@ namespace evspace {
             }
         };
 
-        EVSPACE_CONSTEXPR Vector() EVSPACE_NOEXCEPT;
-        EVSPACE_CONSTEXPR Vector(double, double, double) EVSPACE_NOEXCEPT;
-        EVSPACE_CONSTEXPR Vector(const Vector&) EVSPACE_NOEXCEPT;
-        EVSPACE_CONSTEXPR Vector(Vector&&) noexcept;
-        EVSPACE_CONSTEXPR ~Vector();
+        Vector() EVSPACE_NOEXCEPT;
+        Vector(double, double, double) EVSPACE_NOEXCEPT;
+        Vector(const Vector&) EVSPACE_NOEXCEPT;
+        Vector(Vector&&) noexcept;
+        ~Vector();
 
-        constexpr Vector& operator=(const Vector&);
-        constexpr Vector& operator=(Vector&&) noexcept;
+        Vector& operator=(const Vector&);
+        Vector& operator=(Vector&&) noexcept;
 
-        EVSPACE_CONSTEXPR26 double& operator[](std::size_t);
-        EVSPACE_CONSTEXPR26 const double& operator[](std::size_t) const;
+        double& operator[](std::size_t);
+        const double& operator[](std::size_t) const;
 
         // Prints the Vector as a string similar to Python lists. A
         // Vector whose components are a, b, and c would print the string
@@ -74,20 +74,20 @@ namespace evspace {
         friend std::ostream& ::operator<<(std::ostream&, const Vector&);
         CommaInitializerV operator<<(double value);
 
-        EVSPACE_CONSTEXPR Vector operator+(const Vector&) const EVSPACE_NOEXCEPT;
-        constexpr Vector& operator+=(const Vector&) noexcept;
-        EVSPACE_CONSTEXPR Vector operator-() const EVSPACE_NOEXCEPT;
-        EVSPACE_CONSTEXPR Vector operator-(const Vector&) const EVSPACE_NOEXCEPT;
-        constexpr Vector& operator-=(const Vector&) noexcept;
-        EVSPACE_CONSTEXPR Vector operator*(double) const EVSPACE_NOEXCEPT;
-        EVSPACE_CONSTEXPR Vector operator*(const Matrix&) const EVSPACE_NOEXCEPT;
-        constexpr Vector& operator*=(double) noexcept;
-        constexpr Vector& operator*=(const Matrix&);
-        EVSPACE_CONSTEXPR Vector operator/(double) const;
-        constexpr Vector& operator/=(double);
+        Vector operator+(const Vector&) const EVSPACE_NOEXCEPT;
+        Vector& operator+=(const Vector&) noexcept;
+        Vector operator-() const EVSPACE_NOEXCEPT;
+        Vector operator-(const Vector&) const EVSPACE_NOEXCEPT;
+        Vector& operator-=(const Vector&) noexcept;
+        Vector operator*(double) const EVSPACE_NOEXCEPT;
+        Vector operator*(const Matrix&) const EVSPACE_NOEXCEPT;
+        Vector& operator*=(double) noexcept;
+        Vector& operator*=(const Matrix&);
+        Vector operator/(double) const;
+        Vector& operator/=(double);
 
-        constexpr bool operator==(const Vector&) const;
-        constexpr bool operator!=(const Vector&) const;
+        bool operator==(const Vector&) const;
+        bool operator!=(const Vector&) const;
 
         // Checks if the underlying data array is in a valid state. If
         // EVSPACE_CONSTRUCTOR_NOTHROW is defined constructors are
@@ -95,35 +95,35 @@ namespace evspace {
         // leaves the internal data array unallocated. The constructed
         // Vector in this case is in an invalid state and should not be
         // used.
-        constexpr bool is_valid() const;
+        bool is_valid() const;
 
         // Computes the length of the Vector. This is roughly equivalent to
         // std::sqrt(vector.magnitude_squared());
         // If your goal is the magnitude squared, using this return value
         // will induce rounding errors and magnitude_squared() should be
         // preferred.
-        EVSPACE_CONSTEXPR26 double magnitude() const noexcept;
+        double magnitude() const noexcept;
 
         // Computes the square of the magnitude of the Vector. This should
         // be preferred to squaring the result of the magnitude() method as
         // the latter will contain rounding errors.
-        constexpr double magnitude_squared() const noexcept;
+        double magnitude_squared() const noexcept;
 
         // Modifies this Vector by dividing each element by it's vector norm
         // so the calling vector will be a unit vector, preserving direction.
         // Roughly equivalent to
         // vector = vector / vector.mag();
-        EVSPACE_CONSTEXPR26 Vector& normalize() noexcept;
+        Vector& normalize() noexcept;
 
         // Creates a new Vector instance equal to a unit vector pointing in
         // the direction of the calling Vector.
-        EVSPACE_CONSTEXPR26 Vector norm() const;
+        Vector norm() const;
 
-        friend constexpr double vector_dot(const Vector&, const Vector&) noexcept;
-        friend EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
-        friend EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
-        friend EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
-        friend EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
+        friend double vector_dot(const Vector&, const Vector&) noexcept;
+        friend Vector vector_cross(const Vector&, const Vector&);
+        friend double vector_angle(const Vector&, const Vector&);
+        friend Vector vector_exclude(const Vector&, const Vector&);
+        friend Vector vector_projection(const Vector&, const Vector&);
 
         friend class Matrix;
 
@@ -138,13 +138,13 @@ namespace evspace {
 
 namespace evspace {
 
-    constexpr double vector_dot(const Vector&, const Vector&) noexcept;
-    EVSPACE_CONSTEXPR Vector vector_cross(const Vector&, const Vector&);
-    EVSPACE_CONSTEXPR26 double vector_angle(const Vector&, const Vector&);
-    EVSPACE_CONSTEXPR Vector vector_exclude(const Vector&, const Vector&);
-    EVSPACE_CONSTEXPR Vector vector_projection(const Vector&, const Vector&);
+    double vector_dot(const Vector&, const Vector&) noexcept;
+    Vector vector_cross(const Vector&, const Vector&);
+    double vector_angle(const Vector&, const Vector&);
+    Vector vector_exclude(const Vector&, const Vector&);
+    Vector vector_projection(const Vector&, const Vector&);
 
-    EVSPACE_CONSTEXPR Vector operator*(double scalar, const Vector& vector);
+    Vector operator*(double scalar, const Vector& vector);
 
     #define VECTOR_X(v) (v).m_data[0]
     #define VECTOR_Y(v) (v).m_data[1]
@@ -157,31 +157,31 @@ namespace evspace {
         vector[2] = z;
     }
 
-    inline EVSPACE_CONSTEXPR Vector::Vector() EVSPACE_NOEXCEPT {
+    inline Vector::Vector() EVSPACE_NOEXCEPT {
         this->m_data = new EVSPACE_NOTHROW double[3];
         set_array(this->m_data, 0.0, 0.0, 0.0);
     }
 
-    inline EVSPACE_CONSTEXPR Vector::Vector(double x, double y, double z) EVSPACE_NOEXCEPT {
+    inline Vector::Vector(double x, double y, double z) EVSPACE_NOEXCEPT {
         this->m_data = new EVSPACE_NOTHROW double[3];
         set_array(this->m_data, x, y, z);
     }
 
-    inline EVSPACE_CONSTEXPR Vector::Vector(const Vector& cpy) EVSPACE_NOEXCEPT {
+    inline Vector::Vector(const Vector& cpy) EVSPACE_NOEXCEPT {
         this->m_data = new EVSPACE_NOTHROW double[3];
         set_array(this->m_data, cpy.m_data[0], cpy.m_data[1], cpy.m_data[2]);
     }
 
-    inline EVSPACE_CONSTEXPR Vector::Vector(Vector&& move) noexcept {
+    inline Vector::Vector(Vector&& move) noexcept {
         this->m_data = move.m_data;
         move.m_data = NULL;
     }
     
-    inline EVSPACE_CONSTEXPR Vector::~Vector() {
+    inline Vector::~Vector() {
         delete[] this->m_data;
     }
     
-    inline constexpr Vector& Vector::operator=(const Vector& cpy) {
+    inline Vector& Vector::operator=(const Vector& cpy) {
         set_array(this->m_data, VECTOR_X(cpy), VECTOR_Y(cpy), VECTOR_Z(cpy));
         return* this;
     }
@@ -190,32 +190,27 @@ namespace evspace {
         return Vector::CommaInitializerV(*this, value);
     }
 
-    inline constexpr Vector& Vector::operator=(Vector&& move) noexcept {
-        // not using std::swap because primitive type will generate identical
-        // assembly and std::swap requires c++20 to be constexpr
-        double* tmp = this->m_data;
-        this->m_data = move.m_data;
-        move.m_data = tmp;
+    inline Vector& Vector::operator=(Vector&& move) noexcept {
+        std::swap(this->m_data, move.m_data);
 
         return *this;
     }
 
-    inline EVSPACE_CONSTEXPR26 double& Vector::operator[](std::size_t index) {
+    inline double& Vector::operator[](std::size_t index) {
         if (index > 2) {
             throw std::out_of_range("Vector index out of range");
         }
         return this->m_data[index];
     }
 
-    inline EVSPACE_CONSTEXPR26 const double& Vector::operator[](std::size_t index) const {
+    inline const double& Vector::operator[](std::size_t index) const {
         if (index > 2) {
             throw std::out_of_range("Vector index out of range");
         }
         return this->m_data[index];
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator+(const Vector& rhs) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator+(const Vector& rhs) const EVSPACE_NOEXCEPT {
         return Vector(
             VECTOR_X(*this) + VECTOR_X(rhs),
             VECTOR_Y(*this) + VECTOR_Y(rhs),
@@ -223,8 +218,7 @@ namespace evspace {
         );
     }
 
-    inline constexpr Vector&
-    Vector::operator+=(const Vector& rhs) noexcept {
+    inline Vector& Vector::operator+=(const Vector& rhs) noexcept {
         VECTOR_X(*this) += VECTOR_X(rhs);
         VECTOR_Y(*this) += VECTOR_Y(rhs);
         VECTOR_Z(*this) += VECTOR_Z(rhs);
@@ -232,8 +226,7 @@ namespace evspace {
         return *this;
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator-() const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator-() const EVSPACE_NOEXCEPT {
         return Vector(
             -VECTOR_X(*this),
             -VECTOR_Y(*this),
@@ -241,8 +234,7 @@ namespace evspace {
         );
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator-(const Vector& rhs) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator-(const Vector& rhs) const EVSPACE_NOEXCEPT {
         return Vector(
             VECTOR_X(*this) - VECTOR_X(rhs),
             VECTOR_Y(*this) - VECTOR_Y(rhs),
@@ -250,8 +242,7 @@ namespace evspace {
         );
     }
 
-    inline constexpr Vector&
-    Vector::operator-=(const Vector& rhs) noexcept {
+    inline Vector& Vector::operator-=(const Vector& rhs) noexcept {
         VECTOR_X(*this) -= VECTOR_X(rhs);
         VECTOR_Y(*this) -= VECTOR_Y(rhs);
         VECTOR_Z(*this) -= VECTOR_Z(rhs);
@@ -259,8 +250,7 @@ namespace evspace {
         return *this;
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator*(double scalar) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator*(double scalar) const EVSPACE_NOEXCEPT {
         return Vector(
             VECTOR_X(*this) * scalar,
             VECTOR_Y(*this) * scalar,
@@ -268,8 +258,7 @@ namespace evspace {
         );
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator*(const Matrix& matrix) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator*(const Matrix& matrix) const EVSPACE_NOEXCEPT {
         Vector result;
         for (int i = 0; i < 3; i++) {
             double sum = 0;
@@ -281,8 +270,7 @@ namespace evspace {
         return result;
     }
 
-    inline constexpr Vector&
-    Vector::operator*=(double scalar) noexcept {
+    inline Vector& Vector::operator*=(double scalar) noexcept {
         VECTOR_X(*this) *= scalar;
         VECTOR_Y(*this) *= scalar;
         VECTOR_Z(*this) *= scalar;
@@ -290,8 +278,7 @@ namespace evspace {
         return *this;
     }
 
-    inline constexpr Vector&
-    Vector::operator*=(const Matrix& matrix) {
+    inline Vector& Vector::operator*=(const Matrix& matrix) {
         double buffer[3]{this->m_data[0], this->m_data[1], this->m_data[2]};
         
         for (int i = 0; i < 3; i++) {
@@ -305,8 +292,7 @@ namespace evspace {
         return *this;
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    Vector::operator/(double scalar) const {
+    inline Vector Vector::operator/(double scalar) const {
         return Vector(
             VECTOR_X(*this) / scalar,
             VECTOR_Y(*this) / scalar,
@@ -314,8 +300,7 @@ namespace evspace {
         );
     }
 
-    inline constexpr Vector&
-    Vector::operator/=(double scalar) {
+    inline Vector& Vector::operator/=(double scalar) {
         VECTOR_X(*this) /= scalar;
         VECTOR_Y(*this) /= scalar;
         VECTOR_Z(*this) /= scalar;
@@ -323,7 +308,7 @@ namespace evspace {
         return *this;
     }
 
-    inline constexpr bool Vector::operator==(const Vector& rhs) const {
+    inline bool Vector::operator==(const Vector& rhs) const {
         return (
             VECTOR_X(*this) == VECTOR_X(rhs) &&
             VECTOR_Y(*this) == VECTOR_Y(rhs) &&
@@ -331,32 +316,28 @@ namespace evspace {
         );
     }
 
-    inline constexpr bool Vector::operator!=(const Vector& rhs) const {
+    inline bool Vector::operator!=(const Vector& rhs) const {
         return !(*this == rhs);
     }
 
-    inline constexpr bool Vector::is_valid() const {
+    inline bool Vector::is_valid() const {
         return (this->m_data != NULL);
     }
 
-    inline EVSPACE_CONSTEXPR26 double
-    Vector::magnitude() const noexcept{
+    inline double Vector::magnitude() const noexcept{
         return std::sqrt(vector_dot(*this, *this));
     }
 
-    inline constexpr double
-    Vector::magnitude_squared() const noexcept {
+    inline double Vector::magnitude_squared() const noexcept {
         return vector_dot(*this, *this);
     }
 
-    inline EVSPACE_CONSTEXPR26 Vector&
-    Vector::normalize() noexcept {
+    inline Vector& Vector::normalize() noexcept {
         double mag = this->magnitude();
         return *this /= mag;
     }
 
-    inline EVSPACE_CONSTEXPR26 Vector
-    Vector::norm() const {
+    inline Vector Vector::norm() const {
         double mag = this->magnitude();
         return Vector(
             VECTOR_X(*this) / mag,
@@ -365,15 +346,13 @@ namespace evspace {
         );
     }
 
-    inline constexpr double
-    vector_dot(const Vector& lhs, const Vector& rhs) noexcept {
+    inline double vector_dot(const Vector& lhs, const Vector& rhs) noexcept {
         return std::fma(lhs.m_data[0], rhs.m_data[0],
             std::fma(lhs.m_data[1], rhs.m_data[1],
                         lhs.m_data[2] * rhs.m_data[2]));
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    vector_cross(const Vector& lhs, const Vector& rhs) {
+    inline Vector vector_cross(const Vector& lhs, const Vector& rhs) {
         return Vector(
             VECTOR_Y(lhs) * VECTOR_Z(rhs) - VECTOR_Z(lhs) * VECTOR_Y(rhs),
             VECTOR_Z(lhs) * VECTOR_X(rhs) - VECTOR_X(lhs) * VECTOR_Z(rhs),
@@ -381,8 +360,7 @@ namespace evspace {
         );
     }
 
-    inline EVSPACE_CONSTEXPR26 double
-    vector_angle(const Vector& from, const Vector& to) {
+    inline double vector_angle(const Vector& from, const Vector& to) {
         double dot_product = vector_dot(from, to);
         double magnitude_product = std::sqrt(
             vector_dot(from, from) *
@@ -392,7 +370,7 @@ namespace evspace {
         return std::acos(dot_product / magnitude_product);
     }
 
-    inline constexpr double
+    inline double
     Vector::scalar_projection(const Vector& project, const Vector& onto) noexcept {
         // This is equal to |project| * cos(theta) / |onto|, equal to the
         // fraction of project's projection onto onto relative to the magnitude
@@ -404,8 +382,7 @@ namespace evspace {
         return dot_product / onto_mag_squared;
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    vector_exclude(const Vector& vector, const Vector& exclude) {
+    inline Vector vector_exclude(const Vector& vector, const Vector& exclude) {
         double scale = Vector::scalar_projection(vector, exclude);
         
         return Vector(
@@ -415,14 +392,12 @@ namespace evspace {
         );
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    vector_projection(const Vector& project, const Vector& onto) {
+    inline Vector vector_projection(const Vector& project, const Vector& onto) {
         double scale = Vector::scalar_projection(project, onto);
         return onto * scale;
     }
 
-    inline EVSPACE_CONSTEXPR Vector
-    operator*(double scalar, const Vector& vector) {
+    inline Vector operator*(double scalar, const Vector& vector) {
         return vector * scalar;
     }
 
