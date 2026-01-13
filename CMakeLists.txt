@@ -1,6 +1,8 @@
 ﻿cmake_minimum_required (VERSION 3.23)
 
 project ("evspace_library")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED, ON)
 include(CTest)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
