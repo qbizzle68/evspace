@@ -25,7 +25,6 @@ if(${NEED_GTEST})
     FetchContent_MakeAvailable(googletest)
 endif()
 
-enable_testing()
 add_executable(evspace_unit_testing
     "angles_unit_test.cpp"
     "vector_unit_test.cpp"
@@ -50,5 +49,3 @@ target_precompile_headers(evspace_unit_testing PRIVATE
     <helpers.hpp>
     <cmath>
 )
-
-add_test(NAME evspace_test_suite COMMAND evspace_tests)
