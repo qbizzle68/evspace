@@ -11,6 +11,7 @@
 #include <algorithm>    // std::copy
 #include <ostream>      // std::ostream
 #include <type_traits>
+#include <array>
 
 #define MATRIX_ARRAY_LENGTH     9
 #define MATRIX_ROW_LENGTH       3
@@ -520,11 +521,12 @@ namespace evspace {
 
     inline EVSPACE_CONSTEXPR Matrix
     Matrix::transpose() const EVSPACE_NOEXCEPT {
-        return Matrix({
+        const double arr[3][3]{
             { this->matrix_item(0, 0), this->matrix_item(1, 0), this->matrix_item(2, 0) },
             { this->matrix_item(0, 1), this->matrix_item(1, 1), this->matrix_item(2, 1) },
             { this->matrix_item(0, 2), this->matrix_item(1, 2), this->matrix_item(2, 2) },
-        });
+        };
+        return Matrix(arr);
     }
 
     inline constexpr Matrix&
