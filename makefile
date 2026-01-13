@@ -3,7 +3,7 @@ CXX_STD := c++17
 
 $(info Compiling with -std=$(CXX_STD))
 CXX = g++
-CXXFLAGS = -Wall -Wextra -pedantic -std=$(CXX_STD) -Iinclude -g -DDEBUG
+CXXFLAGS = -g -DDEBUG -MD -MP -std=$(CXX_STD) -Wall -Wextra -pedantic -Iinclude
 ifdef EVSPACE_CONSTRUCTOR_NOTHROW
 CXXFLAGS += -DEVSPACE_CONSTRUCTOR_NOTHROW
 endif
@@ -17,14 +17,15 @@ TEST_SRC_DIR = tests
 CXXFLAGS += -I$(TEST_SRC_DIR)
 
 # Sources
-LIB_HEADERS := $(wildcard include/*.hpp)
-TEST_SOURCES := $(wildcard tests/*.cpp)
+TEST_SOURCES := $(wildcard $(TEST_SRC_DIR)/*.cpp)
 
 # Object files
 TEST_OBJ = $(TEST_SOURCES:$(TEST_SRC_DIR)%.cpp=$(TEST_DIR)%.o)
 
 # Targets
 TEST_BIN = $(TEST_DIR)/run_tests
+
+-include $(TEST_OBJ:.o=.d)
 
 .PHONY: all test clean
 
@@ -34,7 +35,7 @@ all: test
 test: $(TEST_BIN)
 	./$(TEST_BIN)
 
-$(TEST_BIN): $(TEST_OBJ) $(LIB_HEADERS) | $(TEST_DIR)
+$(TEST_BIN): $(TEST_OBJ) | $(TEST_DIR)
 	$(CXX) $(CXXFLAGS) $(GTEST_FLAGS) $^ $(GTEST_LIBS) -o $@
 
 $(TEST_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp | $(TEST_DIR)
