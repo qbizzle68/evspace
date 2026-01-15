@@ -51,7 +51,7 @@ namespace evspace {
         public:
             CommaInitializerV(Vector& v, double first)
                 : CommaInitializer(v, first) {
-                this->get_component(0) = first;
+                this->initialize(first);
             }
         };
 

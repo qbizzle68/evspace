@@ -11,6 +11,7 @@ namespace evspace {
     class CommaInitializer {
     private:
         std::size_t index;
+
     protected:
         T& ref;
 
@@ -18,6 +19,11 @@ namespace evspace {
         // value of the internal index value. If this value is
         // out of valid ranges this should throw std::out_of_range.
         virtual double& get_component(const std::size_t index) = 0;
+
+        void initialize(double first) {
+            this->get_component(0) = first;
+        }
+        
     public:
         // Constructs the CommaInitializer. In order to correctly handle
         // the first argument of a comma separated initialization any

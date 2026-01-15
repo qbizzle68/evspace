@@ -53,7 +53,7 @@ namespace evspace {
         public:
             CommaInitializerM(Matrix& m, double first)
                 : CommaInitializer(m, first) {
-                this->get_component(0) = first;
+                this->initialize(first);
             }
         };
 
