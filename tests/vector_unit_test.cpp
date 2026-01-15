@@ -5,6 +5,7 @@
 *
 */
 
+#include <evspace_common.hpp>
 #include <vector.hpp>
 #include <matrix.hpp>
 #include <sstream>    // std::stringstream
@@ -222,4 +223,24 @@ TEST(VectorUnitTest, TestVectorInsertionOperator) {
 
     const char* expected_output = "[ 1.234, 2, -3.1415 ]";
     EXPECT_EQ(ss.str(), expected_output) << "Vector insertion operator invalid result";
+}
+
+TEST(VectorUnitTest, TestVectorData) {
+    Vector vector = Vector(1, 2, 3);
+    span_t<double> span = vector.data();
+    EXPECT_EQ(span[0], vector[0]);
+    EXPECT_EQ(span[1], vector[1]);
+    EXPECT_EQ(span[2], vector[2]);
+    EXPECT_EQ(span.size(), 3);
+    EXPECT_EQ(span.size_bytes(), 3 * sizeof(double));
+    span[0] = 5;
+    EXPECT_EQ(vector[0], 5);
+
+    const span_t<double> span_const = vector.data();
+    EXPECT_EQ(span[0], vector[0]);
+    EXPECT_EQ(span[1], vector[1]);
+    EXPECT_EQ(span[2], vector[2]);
+    
+    EXPECT_EQ(span_const.size(), 3);
+    EXPECT_EQ(span_const.size_bytes(), 3 * sizeof(double));
 }

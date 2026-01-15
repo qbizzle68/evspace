@@ -7,7 +7,7 @@
 #if __cplusplus >= 202002L
 #include <span>
 #else
-#include <gsl/span.h>
+#include <gsl/span>
 #endif
 
 namespace evspace {

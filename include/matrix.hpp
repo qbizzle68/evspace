@@ -1,6 +1,7 @@
 #ifndef _EVSPACE_MATRIX_H_
 #define _EVSPACE_MATRIX_H_
 
+#include <evspace_common.hpp>
 #include <comma_operator.hpp>
 #include <initializer_list>
 #include <cstddef>      // std::size_t
@@ -127,6 +128,9 @@ namespace evspace {
 
         double& operator()(std::size_t, std::size_t);
         const double& operator()(std::size_t, std::size_t) const;
+
+        span_t<double> data() noexcept;
+        span_t<const double> data() const noexcept;
 
         friend std::ostream& ::operator<<(std::ostream&, const Matrix&);
         CommaInitializerM operator<<(double);
@@ -344,6 +348,14 @@ namespace evspace {
         }
 
         return MATRIX_ITEM_THIS(row, col);
+    }
+
+    inline span_t<double> Matrix::data() noexcept {
+        return span_t<double>(this->m_data, 9); 
+    }
+
+    inline span_t<const double> Matrix::data() const noexcept {
+        return span_t<const double>(this->m_data, 9);
     }
     
     inline Matrix Matrix::operator+(const Matrix& rhs) const {

@@ -3,7 +3,7 @@ CXX_STD := c++17
 
 $(info Compiling with -std=$(CXX_STD))
 CXX = g++
-CXXFLAGS = -g -DDEBUG -MD -MP -std=$(CXX_STD) -Wall -Wextra -pedantic -Iinclude
+CXXFLAGS = -g -DDEBUG -MD -MP -std=$(CXX_STD) -Wall -Wextra -pedantic -Iinclude -Iexternal
 ifdef EVSPACE_CONSTRUCTOR_NOTHROW
 CXXFLAGS += -DEVSPACE_CONSTRUCTOR_NOTHROW
 endif

@@ -1,6 +1,7 @@
 ﻿#ifndef _EVSPACE_H_
 #define _EVSPACE_H_
 
+#include <evspace_common.hpp>
 #include <axis.hpp>
 #include <angles.hpp>
 #include <vector.hpp>

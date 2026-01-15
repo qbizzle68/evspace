@@ -273,3 +273,34 @@ TEST_F(MatrixUnitTest, TestIdentity) {
 
     COMPARE_MATRIX(Matrix::IDENTITY, answer, "Matrix identity error");
 }
+
+TEST(MatrixUnitTestData, TestDataAccessors) {
+    Matrix matrix{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    span_t<double> span = matrix.data();
+    EXPECT_EQ(span[0], 1) << "matrix span error in index 0";
+    EXPECT_EQ(span[1], 2) << "matrix span error in index 1";
+    EXPECT_EQ(span[2], 3) << "matrix span error in index 2";
+    EXPECT_EQ(span[3], 4) << "matrix span error in index 3";
+    EXPECT_EQ(span[4], 5) << "matrix span error in index 4";
+    EXPECT_EQ(span[5], 6) << "matrix span error in index 5";
+    EXPECT_EQ(span[6], 7) << "matrix span error in index 6";
+    EXPECT_EQ(span[7], 8) << "matrix span error in index 7";
+    EXPECT_EQ(span[8], 9) << "matrix span error in index 8";
+    EXPECT_EQ(span.size(), 9) << "matrix span size error";
+    EXPECT_EQ(span.size_bytes(), 9 * sizeof(double)) << "matrix span size_bytes error";
+    span[5] = 10;
+    EXPECT_EQ(matrix(1, 2), 10) << "matrix span modify error";
+
+    span_t<const double> span_const = matrix.data();
+    EXPECT_EQ(span[0], 1) << "matrix const span error in index 0";
+    EXPECT_EQ(span[1], 2) << "matrix const span error in index 1";
+    EXPECT_EQ(span[2], 3) << "matrix const span error in index 2";
+    EXPECT_EQ(span[3], 4) << "matrix const span error in index 3";
+    EXPECT_EQ(span[4], 5) << "matrix const span error in index 4";
+    EXPECT_EQ(span[5], 10) << "matrix const span error in index 5";
+    EXPECT_EQ(span[6], 7) << "matrix const span error in index 6";
+    EXPECT_EQ(span[7], 8) << "matrix const span error in index 7";
+    EXPECT_EQ(span[8], 9) << "matrix const span error in index 8";
+    EXPECT_EQ(span.size(), 9) << "matrix const span size error";
+    EXPECT_EQ(span.size_bytes(), 9 * sizeof(double)) << "matrix const span size_bytes error";
+}

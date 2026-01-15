@@ -5,6 +5,7 @@
 #include <ostream>      // std::ostream
 #include <stdexcept>    // std::out_of_range
 #include <cmath>        // std::sqrt, std::acos
+#include <evspace_common.hpp>
 #include <comma_operator.hpp>
 
 // forward declaration for global friend function signature (below function)
@@ -66,6 +67,9 @@ namespace evspace {
 
         double& operator[](std::size_t);
         const double& operator[](std::size_t) const;
+
+        span_t<double> data() noexcept;
+        span_t<const double> data() const noexcept;
 
         // Prints the Vector as a string similar to Python lists. A
         // Vector whose components are a, b, and c would print the string
@@ -199,6 +203,14 @@ namespace evspace {
             throw std::out_of_range("Vector index out of range");
         }
         return this->m_data[index];
+    }
+
+    inline span_t<double> Vector::data() noexcept {
+        return span_t<double>(this->m_data, 3);
+    }
+
+    inline span_t<const double> Vector::data() const noexcept {
+        return span_t<const double>(this->m_data, 3);
     }
 
     inline Vector Vector::operator+(const Vector& rhs) const {
