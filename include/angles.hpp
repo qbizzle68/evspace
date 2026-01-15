@@ -2,7 +2,6 @@
 #define _EVSPACE_ANGLES_H_
 
 #include <axis.hpp>
-#include <evspace_common.hpp>
 #include <cstddef>      // std::size_t
 #include <stdexcept>    // std::out_of_range
 

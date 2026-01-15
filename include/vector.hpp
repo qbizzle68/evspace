@@ -5,7 +5,6 @@
 #include <ostream>      // std::ostream
 #include <stdexcept>    // std::out_of_range
 #include <cmath>        // std::sqrt, std::acos
-#include <evspace_common.hpp>
 #include <comma_operator.hpp>
 
 // forward declaration for global friend function signature (below function)
@@ -56,9 +55,9 @@ namespace evspace {
             }
         };
 
-        Vector() EVSPACE_NOEXCEPT;
-        Vector(double, double, double) EVSPACE_NOEXCEPT;
-        Vector(const Vector&) EVSPACE_NOEXCEPT;
+        Vector();
+        Vector(double, double, double);
+        Vector(const Vector&);
         Vector(Vector&&) noexcept;
         ~Vector();
 
@@ -74,13 +73,13 @@ namespace evspace {
         friend std::ostream& ::operator<<(std::ostream&, const Vector&);
         CommaInitializerV operator<<(double value);
 
-        Vector operator+(const Vector&) const EVSPACE_NOEXCEPT;
+        Vector operator+(const Vector&) const;
         Vector& operator+=(const Vector&) noexcept;
-        Vector operator-() const EVSPACE_NOEXCEPT;
-        Vector operator-(const Vector&) const EVSPACE_NOEXCEPT;
+        Vector operator-() const;
+        Vector operator-(const Vector&) const;
         Vector& operator-=(const Vector&) noexcept;
-        Vector operator*(double) const EVSPACE_NOEXCEPT;
-        Vector operator*(const Matrix&) const EVSPACE_NOEXCEPT;
+        Vector operator*(double) const;
+        Vector operator*(const Matrix&) const;
         Vector& operator*=(double) noexcept;
         Vector& operator*=(const Matrix&);
         Vector operator/(double) const;
@@ -88,14 +87,6 @@ namespace evspace {
 
         bool operator==(const Vector&) const;
         bool operator!=(const Vector&) const;
-
-        // Checks if the underlying data array is in a valid state. If
-        // EVSPACE_CONSTRUCTOR_NOTHROW is defined constructors are
-        // guaranteed not to throw even on an allocation exception, which
-        // leaves the internal data array unallocated. The constructed
-        // Vector in this case is in an invalid state and should not be
-        // used.
-        bool is_valid() const;
 
         // Computes the length of the Vector. This is roughly equivalent to
         // std::sqrt(vector.magnitude_squared());
@@ -157,18 +148,18 @@ namespace evspace {
         vector[2] = z;
     }
 
-    inline Vector::Vector() EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[3];
+    inline Vector::Vector() {
+        this->m_data = new double[3];
         set_array(this->m_data, 0.0, 0.0, 0.0);
     }
 
-    inline Vector::Vector(double x, double y, double z) EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[3];
+    inline Vector::Vector(double x, double y, double z) {
+        this->m_data = new double[3];
         set_array(this->m_data, x, y, z);
     }
 
-    inline Vector::Vector(const Vector& cpy) EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[3];
+    inline Vector::Vector(const Vector& cpy) {
+        this->m_data = new double[3];
         set_array(this->m_data, cpy.m_data[0], cpy.m_data[1], cpy.m_data[2]);
     }
 
@@ -210,7 +201,7 @@ namespace evspace {
         return this->m_data[index];
     }
 
-    inline Vector Vector::operator+(const Vector& rhs) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator+(const Vector& rhs) const {
         return Vector(
             VECTOR_X(*this) + VECTOR_X(rhs),
             VECTOR_Y(*this) + VECTOR_Y(rhs),
@@ -226,7 +217,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Vector Vector::operator-() const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator-() const {
         return Vector(
             -VECTOR_X(*this),
             -VECTOR_Y(*this),
@@ -234,7 +225,7 @@ namespace evspace {
         );
     }
 
-    inline Vector Vector::operator-(const Vector& rhs) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator-(const Vector& rhs) const {
         return Vector(
             VECTOR_X(*this) - VECTOR_X(rhs),
             VECTOR_Y(*this) - VECTOR_Y(rhs),
@@ -250,7 +241,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Vector Vector::operator*(double scalar) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator*(double scalar) const {
         return Vector(
             VECTOR_X(*this) * scalar,
             VECTOR_Y(*this) * scalar,
@@ -258,7 +249,7 @@ namespace evspace {
         );
     }
 
-    inline Vector Vector::operator*(const Matrix& matrix) const EVSPACE_NOEXCEPT {
+    inline Vector Vector::operator*(const Matrix& matrix) const {
         Vector result;
         for (int i = 0; i < 3; i++) {
             double sum = 0;
@@ -318,10 +309,6 @@ namespace evspace {
 
     inline bool Vector::operator!=(const Vector& rhs) const {
         return !(*this == rhs);
-    }
-
-    inline bool Vector::is_valid() const {
-        return (this->m_data != NULL);
     }
 
     inline double Vector::magnitude() const noexcept{

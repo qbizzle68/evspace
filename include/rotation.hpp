@@ -4,7 +4,6 @@
 #include <angles.hpp>
 #include <matrix.hpp>
 #include <vector.hpp>
-#include <evspace_common.hpp>
 #include <cstddef>      // std::size_t
 #include <stdexcept>    // std::out_of_range
 #include <cmath>        // std::cos, std::sin

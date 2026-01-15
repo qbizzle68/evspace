@@ -1,7 +1,6 @@
 #ifndef _EVSPACE_MATRIX_H_
 #define _EVSPACE_MATRIX_H_
 
-#include <evspace_common.hpp>
 #include <comma_operator.hpp>
 #include <initializer_list>
 #include <cstddef>      // std::size_t
@@ -83,7 +82,7 @@ namespace evspace {
             return 0;
         }
 
-        Matrix() EVSPACE_NOEXCEPT;
+        Matrix();
 
         // Constructs a Matrix from a flat container type with
         // underlying arithmetic type.
@@ -109,17 +108,17 @@ namespace evspace {
         // arithmetic type. If T is not double then each value is
         // cast to a double type.
         template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-        Matrix(const T(&)[9]) EVSPACE_NOEXCEPT;
+        Matrix(const T(&)[9]);
 
         // Constructs a Matrix from a 2-dimensional array of
         // arithmetic type. If T is not double then each value is
         // cast to a double type.
         template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-        Matrix(const T(&)[3][3]) EVSPACE_NOEXCEPT;
+        Matrix(const T(&)[3][3]);
 
         Matrix(const std::initializer_list<double>&);
         Matrix(const std::initializer_list<std::initializer_list<double>>&);
-        Matrix(const Matrix&) EVSPACE_NOEXCEPT;
+        Matrix(const Matrix&);
         Matrix(Matrix&&) noexcept;
         ~Matrix();
 
@@ -132,26 +131,24 @@ namespace evspace {
         friend std::ostream& ::operator<<(std::ostream&, const Matrix&);
         CommaInitializerM operator<<(double);
 
-        Matrix operator+(const Matrix&) const EVSPACE_NOEXCEPT;
+        Matrix operator+(const Matrix&) const;
         Matrix& operator+=(const Matrix&) noexcept;
-        Matrix operator-() const EVSPACE_NOEXCEPT;
-        Matrix operator-(const Matrix&) const EVSPACE_NOEXCEPT;
+        Matrix operator-() const;
+        Matrix operator-(const Matrix&) const;
         Matrix& operator-=(const Matrix&) noexcept;
-        Matrix operator*(double) const EVSPACE_NOEXCEPT;
+        Matrix operator*(double) const;
         Matrix& operator*=(double) noexcept;
-        Matrix operator*(const Matrix&) const EVSPACE_NOEXCEPT;
+        Matrix operator*(const Matrix&) const;
         Matrix& operator*=(const Matrix&) noexcept;
-        Vector operator*(const Vector&) const EVSPACE_NOEXCEPT;
-        Matrix operator/(double) const EVSPACE_NOEXCEPT;
+        Vector operator*(const Vector&) const;
+        Matrix operator/(double) const;
         Matrix& operator/=(double) noexcept;
 
         bool operator==(const Matrix&) const noexcept;
         bool operator!=(const Matrix&) const noexcept;
 
-        bool is_valid() const noexcept;
-
         double determinate() const noexcept;
-        Matrix transpose() const EVSPACE_NOEXCEPT;
+        Matrix transpose() const;
         Matrix& transpose_inplace() noexcept;
         Matrix inverse() const;
 
@@ -183,7 +180,7 @@ namespace evspace {
             }
         }
 
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
         if constexpr (std::is_same_v<ValueType, double>) {
             std::memcpy(this->m_data, std::data(c), MATRIX_BYTE_SIZE);
         }
@@ -211,7 +208,7 @@ namespace evspace {
             }
         }
 
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
             if constexpr (inner_size == 0) {
                 if (c[i].size() != MATRIX_ROW_LENGTH) {
@@ -231,8 +228,8 @@ namespace evspace {
     
     template<typename T, typename>
     inline
-    Matrix::Matrix(const T (&arr)[9]) EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+    Matrix::Matrix(const T (&arr)[9]) {
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
 
         if constexpr (std::is_same_v<T, double>) {
             std::memcpy(this->m_data, arr, MATRIX_BYTE_SIZE);
@@ -246,8 +243,8 @@ namespace evspace {
 
     template<typename T, typename>
     inline
-    Matrix::Matrix(const T (&arr)[3][3]) EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+    Matrix::Matrix(const T (&arr)[3][3]) {
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
 
         if constexpr (std::is_same_v<T, double>) {
             std::memcpy(this->m_data, arr[0], MATRIX_ROW_BYTE_SIZE);
@@ -268,7 +265,7 @@ namespace evspace {
             throw std::out_of_range("Initializer list must have exactly 9 elements");
         }
 
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
         const double* data = std::data(list);
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
             std::memcpy(this->m_data + MATRIX_ROW_LENGTH * i, data + MATRIX_ROW_LENGTH * i, MATRIX_ROW_BYTE_SIZE);
@@ -280,7 +277,7 @@ namespace evspace {
             throw std::out_of_range("Initializer list must have exactly 3 rows");
         }
 
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
         int i = 0;
         for (auto& row : list) {
             if (row.size() != MATRIX_ROW_LENGTH) {
@@ -295,12 +292,12 @@ namespace evspace {
         return Matrix::CommaInitializerM(*this, value);
     }
     
-    inline Matrix::Matrix() EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH] {0.0};
+    inline Matrix::Matrix() {
+        this->m_data = new double[MATRIX_ARRAY_LENGTH] {0.0};
     }
 
-    inline Matrix::Matrix(const Matrix& cpy) EVSPACE_NOEXCEPT {
-        this->m_data = new EVSPACE_NOTHROW double[MATRIX_ARRAY_LENGTH];
+    inline Matrix::Matrix(const Matrix& cpy) {
+        this->m_data = new double[MATRIX_ARRAY_LENGTH];
         std::memcpy(this->m_data, cpy.m_data, MATRIX_BYTE_SIZE);
     }
 
@@ -349,7 +346,7 @@ namespace evspace {
         return MATRIX_ITEM_THIS(row, col);
     }
     
-    inline Matrix Matrix::operator+(const Matrix& rhs) const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator+(const Matrix& rhs) const {
         Matrix result = Matrix();
 
         for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
@@ -367,7 +364,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Matrix Matrix::operator-() const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator-() const {
         Matrix result = Matrix();
 
         for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
@@ -377,7 +374,7 @@ namespace evspace {
         return result;
     }
 
-    inline Matrix Matrix::operator-(const Matrix& rhs) const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator-(const Matrix& rhs) const {
         Matrix result = Matrix();
 
         for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
@@ -395,7 +392,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Matrix Matrix::operator*(double scalar) const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator*(double scalar) const {
         Matrix result = Matrix();
 
         for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
@@ -413,7 +410,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Vector Matrix::operator*(const Vector& vec) const EVSPACE_NOEXCEPT {
+    inline Vector Matrix::operator*(const Vector& vec) const {
         Vector result;
 
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
@@ -427,7 +424,7 @@ namespace evspace {
         return result;
     }
 
-    inline Matrix Matrix::operator*(const Matrix& rhs) const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator*(const Matrix& rhs) const {
         Matrix result;
 
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
@@ -461,7 +458,7 @@ namespace evspace {
         return *this;
     }
 
-    inline Matrix Matrix::operator/(double scalar) const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::operator/(double scalar) const {
         Matrix matrix = Matrix();
 
         for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
@@ -493,10 +490,6 @@ namespace evspace {
         return !(*this == rhs);
     }
 
-    inline bool Matrix::is_valid() const noexcept {
-        return (this->m_data != NULL);
-    }
-
     inline double Matrix::determinate() const noexcept {
         double result = 0;
 
@@ -510,7 +503,7 @@ namespace evspace {
         return result;
     }
 
-    inline Matrix Matrix::transpose() const EVSPACE_NOEXCEPT {
+    inline Matrix Matrix::transpose() const {
         return Matrix({
             { MATRIX_ITEM_THIS(0, 0), MATRIX_ITEM_THIS(1, 0), MATRIX_ITEM_THIS(2, 0) },
             { MATRIX_ITEM_THIS(0, 1), MATRIX_ITEM_THIS(1, 1), MATRIX_ITEM_THIS(2, 1) },
