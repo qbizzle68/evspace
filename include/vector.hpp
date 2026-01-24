@@ -58,6 +58,7 @@ namespace evspace {
 
         Vector();
         Vector(double, double, double);
+        Vector(const std::array<double, 3>&);
         Vector(const Vector&);
         Vector(Vector&&) noexcept;
         ~Vector();
@@ -160,6 +161,11 @@ namespace evspace {
     inline Vector::Vector(double x, double y, double z) {
         this->m_data = new double[3];
         set_array(this->m_data, x, y, z);
+    }
+
+    inline Vector::Vector(const std::array<double, 3>& arr) {
+        this->m_data = new double[3];
+        std::memcpy(this->m_data, arr.data(), 3 * sizeof(double));
     }
 
     inline Vector::Vector(const Vector& cpy) {

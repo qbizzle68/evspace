@@ -11,6 +11,7 @@
 #include <sstream>    // std::stringstream
 #include <gtest/gtest.h>
 #include <helpers.hpp>
+#include <array>
 
 namespace evs = evspace;
 
@@ -24,6 +25,12 @@ TEST(VectorUnitTest, TestConstruction) {
     EXPECT_EQ(vector[0], 1.1) << "Invalid x-component after construction";
     EXPECT_EQ(vector[1], 2.0) << "Invalid y-component after construction";
     EXPECT_EQ(vector[2], 3.0) << "Invalid z-component after construction";
+
+    std::array<double, 3> arr{1.5, 2.0, 3.5};
+    vector = evs::Vector(arr);
+    EXPECT_EQ(vector[0], 1.5) << "std::array constructor invalid x-component";
+    EXPECT_EQ(vector[1], 2.0) << "std::array constructor invalid y-component";
+    EXPECT_EQ(vector[2], 3.5) << "std::array constructor invalid z-component";
 
     vector = evs::Vector(1, 2, 3);
     evs::Vector vector_copy = evs::Vector(vector);
