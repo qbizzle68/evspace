@@ -14,16 +14,16 @@
 #include <gtest/gtest.h>
 #include <helpers.hpp>
 
-using namespace evspace;
+namespace evs = evspace;
 
 TEST(ReferenceFrameUnitTest, TestCreation) {
-    Matrix matrix_result;
+    evs::Matrix matrix_result;
     MatrixArray matrix_answer;
-    Vector vector_result;
+    evs::Vector vector_result;
     VectorArray vector_answer;
 
-    EulerAngles angles = EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
-    auto frame = ReferenceFrame<XYZ, IntrinsicRotation>(angles);
+    evs::EulerAngles angles = evs::EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
+    auto frame = evs::ReferenceFrame<evs::XYZ, evs::IntrinsicRotation>(angles);
     matrix_result = frame.get_matrix();
     matrix_answer = create_array(XYZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(matrix_result, matrix_answer, "ReferenceFrame initialization XYZ 30-45-60 matrix error");
@@ -37,9 +37,9 @@ TEST(ReferenceFrameUnitTest, TestCreation) {
     EXPECT_EQ(angles[1], frame_angles[1]) << "ReferenceFrame 30-45-60 angles getter beta angle error";
     EXPECT_EQ(angles[2], frame_angles[2]) << "ReferenceFrame 30-45-60 angles getter gamma angle error";
 
-    Vector offset = Vector(1, 2, 3);
-    angles = EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
-    auto extrinsic_frame = ReferenceFrame<ZYX, ExtrinsicRotation>(angles, offset);
+    evs::Vector offset = evs::Vector(1, 2, 3);
+    angles = evs::EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
+    auto extrinsic_frame = evs::ReferenceFrame<evs::ZYX, evs::ExtrinsicRotation>(angles, offset);
     vector_result = extrinsic_frame.get_offset();
     COMPARE_VECTOR(vector_result, offset, "ReferenceFrame offset initialization get_offset error");
     matrix_result = extrinsic_frame.get_matrix();
@@ -47,87 +47,87 @@ TEST(ReferenceFrameUnitTest, TestCreation) {
 }
 
 TEST(ReferenceFrameUnitTest, TestSetters) {
-    EulerAngles angles = EulerAngles(0, 0, 0);
-    auto frame = ReferenceFrame<XYZ, IntrinsicRotation>(angles);
+    evs::EulerAngles angles = evs::EulerAngles(0, 0, 0);
+    auto frame = evs::ReferenceFrame<evs::XYZ, evs::IntrinsicRotation>(angles);
 
-    angles = EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
+    angles = evs::EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
     frame.set_angles(angles);
-    Matrix matrix_result = frame.get_matrix();
+    evs::Matrix matrix_result = frame.get_matrix();
     MatrixArray matrix_answer = create_array(XYZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(matrix_result, matrix_answer, "ReferenceFrame set angles new matrix error");
-    EulerAngles frame_angles = frame.get_angles();
+    evs::EulerAngles frame_angles = frame.get_angles();
     EXPECT_EQ(angles[0], frame_angles[0]) << "ReferenceFrame 30-45-60 angles getter alpha angle error";
     EXPECT_EQ(angles[1], frame_angles[1]) << "ReferenceFrame 30-45-60 angles getter beta angle error";
     EXPECT_EQ(angles[2], frame_angles[2]) << "ReferenceFrame 30-45-60 angles getter gamma angle error";
 
-    Vector offset = Vector(1, 2, 3);
+    evs::Vector offset = evs::Vector(1, 2, 3);
     frame.set_offset(offset);
-    Vector vector_result = frame.get_offset();
+    evs::Vector vector_result = frame.get_offset();
     COMPARE_VECTOR(vector_result, offset, "ReferenceFrame set offset error");
 }
 
 TEST(ReferenceFrameUnitTest, TestRotationMatrices) {
-    EulerAngles angles = EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
-    Matrix result;
+    evs::EulerAngles angles = evs::EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
+    evs::Matrix result;
     MatrixArray answer;
 
-    auto frame_XYZ = ReferenceFrame<XYZ, IntrinsicRotation>(angles);
+    auto frame_XYZ = evs::ReferenceFrame<evs::XYZ, evs::IntrinsicRotation>(angles);
     result = frame_XYZ.get_matrix();
     answer = create_array(XYZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XYZ intrinsic rotation matrix error");
-    auto frame_XZY = ReferenceFrame<XZY, IntrinsicRotation>(angles);
+    auto frame_XZY = evs::ReferenceFrame<evs::XZY, evs::IntrinsicRotation>(angles);
     result = frame_XZY.get_matrix();
     answer = create_array(XZY_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XZY intrinsic rotation matrix error");
-    auto frame_XYX = ReferenceFrame<XYX, IntrinsicRotation>(angles);
+    auto frame_XYX = evs::ReferenceFrame<evs::XYX, evs::IntrinsicRotation>(angles);
     result = frame_XYX.get_matrix();
     answer = create_array(XYX_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XYX intrinsic rotation matrix error");
-    auto frame_ZXZ = ReferenceFrame<ZXZ, IntrinsicRotation>(angles);
+    auto frame_ZXZ = evs::ReferenceFrame<evs::ZXZ, evs::IntrinsicRotation>(angles);
     result = frame_ZXZ.get_matrix();
     answer = create_array(ZXZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "ZXZ intrinsic rotation matrix error");
 
     // our answers are for intrinsic rotations only, so we build the equivalent extrinsic rotation
-    angles = EulerAngles(EVSPACE_PI / 3, EVSPACE_PI / 4, EVSPACE_PI / 6);
-    auto frame_XYZ_extrinsic = ReferenceFrame<ZYX, ExtrinsicRotation>(angles);
+    angles = evs::EulerAngles(EVSPACE_PI / 3, EVSPACE_PI / 4, EVSPACE_PI / 6);
+    auto frame_XYZ_extrinsic = evs::ReferenceFrame<evs::ZYX, evs::ExtrinsicRotation>(angles);
     result = frame_XYZ_extrinsic.get_matrix();
     answer = create_array(XYZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XYZ extrinsic rotation matrix error");
-    auto frame_XZY_extrinsic = ReferenceFrame<YZX, ExtrinsicRotation>(angles);
+    auto frame_XZY_extrinsic = evs::ReferenceFrame<evs::YZX, evs::ExtrinsicRotation>(angles);
     result = frame_XZY_extrinsic.get_matrix();
     answer = create_array(XZY_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XZY extrinsic rotation matrix error");
-    auto frame_XYX_extrinsic = ReferenceFrame<XYX, ExtrinsicRotation>(angles);
+    auto frame_XYX_extrinsic = evs::ReferenceFrame<evs::XYX, evs::ExtrinsicRotation>(angles);
     result = frame_XYX_extrinsic.get_matrix();
     answer = create_array(XYX_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "XYX extrinsic rotation matrix error");
-    auto frame_ZXZ_extrinsic = ReferenceFrame<ZXZ, ExtrinsicRotation>(angles);
+    auto frame_ZXZ_extrinsic = evs::ReferenceFrame<evs::ZXZ, evs::ExtrinsicRotation>(angles);
     result = frame_ZXZ_extrinsic.get_matrix();
     answer = create_array(ZXZ_ROTATION_MATRIX);
     _COMPARE_MATRIX_NEAR(result, answer, "ZXZ extrinsic rotation matrix error");
 }
 
 TEST(ReferenceFrameUnitTest, TestRotationVectors) {
-    EulerAngles angles = EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
-    Vector result;
+    evs::EulerAngles angles = evs::EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
+    evs::Vector result;
     VectorArray answer;
-    const Vector test_vector = Vector(1, 2, 3);
-    const Vector offset_vector = Vector(10, 20, 30);
+    const evs::Vector test_vector = evs::Vector(1, 2, 3);
+    const evs::Vector offset_vector = evs::Vector(10, 20, 30);
 
-    auto frame_XYZ = ReferenceFrame<XYZ, IntrinsicRotation>(angles);
+    auto frame_XYZ = evs::ReferenceFrame<evs::XYZ, evs::IntrinsicRotation>(angles);
     result = frame_XYZ.rotate_to(test_vector);
     answer = create_array(XYZ_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XYZ error");
-    auto frame_XZY = ReferenceFrame<XZY, IntrinsicRotation>(angles);
+    auto frame_XZY = evs::ReferenceFrame<evs::XZY, evs::IntrinsicRotation>(angles);
     result = frame_XZY.rotate_to(test_vector);
     answer = create_array(XZY_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XZY error");
-    auto frame_XYX = ReferenceFrame<XYX, IntrinsicRotation>(angles);
+    auto frame_XYX = evs::ReferenceFrame<evs::XYX, evs::IntrinsicRotation>(angles);
     result = frame_XYX.rotate_to(test_vector);
     answer = create_array(XYX_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XYX error");
-    auto frame_ZXZ = ReferenceFrame<ZXZ, IntrinsicRotation>(angles);
+    auto frame_ZXZ = evs::ReferenceFrame<evs::ZXZ, evs::IntrinsicRotation>(angles);
     result = frame_ZXZ.rotate_to(test_vector);
     answer = create_array(ZXZ_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to ZXZ error");
@@ -177,20 +177,20 @@ TEST(ReferenceFrameUnitTest, TestRotationVectors) {
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from offset ZXZ error");
 
     // extrinsic tests
-    angles = EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
-    auto frame_XYZ_extrinsic = ReferenceFrame<ZYX, ExtrinsicRotation>(angles);
+    angles = evs::EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
+    auto frame_XYZ_extrinsic = evs::ReferenceFrame<evs::ZYX, evs::ExtrinsicRotation>(angles);
     result = frame_XYZ_extrinsic.rotate_to(test_vector);
     answer = create_array(XYZ_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XYZ extrinsic error");
-    auto frame_XZY_extrinsic = ReferenceFrame<YZX, ExtrinsicRotation>(angles);
+    auto frame_XZY_extrinsic = evs::ReferenceFrame<evs::YZX, evs::ExtrinsicRotation>(angles);
     result = frame_XZY_extrinsic.rotate_to(test_vector);
     answer = create_array(XZY_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XZY extrinsic error");
-    auto frame_XYX_extrinsic = ReferenceFrame<XYX, ExtrinsicRotation>(angles);
+    auto frame_XYX_extrinsic = evs::ReferenceFrame<evs::XYX, evs::ExtrinsicRotation>(angles);
     result = frame_XYX_extrinsic.rotate_to(test_vector);
     answer = create_array(XYX_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to XYX extrinsic error");
-    auto frame_ZXZ_extrinsic = ReferenceFrame<ZXZ, ExtrinsicRotation>(angles);
+    auto frame_ZXZ_extrinsic = evs::ReferenceFrame<evs::ZXZ, evs::ExtrinsicRotation>(angles);
     result = frame_ZXZ_extrinsic.rotate_to(test_vector);
     answer = create_array(ZXZ_ROTATION_TO);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector to ZXZ extrinsic error");
@@ -240,18 +240,18 @@ TEST(ReferenceFrameUnitTest, TestRotationVectors) {
 }
 
 TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
-    EulerAngles angles_from = EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
-    EulerAngles angles_to = EulerAngles(0, EVSPACE_PI_4, EVSPACE_PI / 2);
-    Vector result;
+    evs::EulerAngles angles_from = evs::EulerAngles(EVSPACE_PI / 6, EVSPACE_PI_4, EVSPACE_PI / 3);
+    evs::EulerAngles angles_to = evs::EulerAngles(0, EVSPACE_PI_4, EVSPACE_PI / 2);
+    evs::Vector result;
     VectorArray answer;
-    const Vector offset_from = Vector(10, 20, 30);
-    const Vector offset_to = Vector(100, 200, 300);
-    const Vector test_vector = Vector(1, 2, 3);
-    const Vector zero_vector = Vector(0, 0, 0);
+    const evs::Vector offset_from = evs::Vector(10, 20, 30);
+    const evs::Vector offset_to = evs::Vector(100, 200, 300);
+    const evs::Vector test_vector = evs::Vector(1, 2, 3);
+    const evs::Vector zero_vector = evs::Vector(0, 0, 0);
 
     //  XYZ -> YXY
-    auto frame_XYZ = ReferenceFrame<XYZ, IntrinsicRotation>(angles_from);
-    auto frame_YXY = ReferenceFrame<YXY, IntrinsicRotation>(angles_to);
+    auto frame_XYZ = evs::ReferenceFrame<evs::XYZ, evs::IntrinsicRotation>(angles_from);
+    auto frame_YXY = evs::ReferenceFrame<evs::YXY, evs::IntrinsicRotation>(angles_to);
     result = frame_XYZ.rotate_to(frame_YXY, test_vector);
     answer = create_array(FROM_XYZ_TO_YXY_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from XYZ to YXY error");
@@ -278,8 +278,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset YXY to offset XYZ error");
 
     //  XZY -> XYX
-    auto frame_XZY = ReferenceFrame<XZY, IntrinsicRotation>(angles_from);
-    auto frame_XYX = ReferenceFrame<XYX, IntrinsicRotation>(angles_to);
+    auto frame_XZY = evs::ReferenceFrame<evs::XZY, evs::IntrinsicRotation>(angles_from);
+    auto frame_XYX = evs::ReferenceFrame<evs::XYX, evs::IntrinsicRotation>(angles_to);
     result = frame_XZY.rotate_to(frame_XYX, test_vector);
     answer = create_array(FROM_XZY_TO_XYX_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from XZY to XYX error");
@@ -306,8 +306,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset XYX to offset XZY error");
 
     //  XYX -> ZYX
-    frame_XYX = ReferenceFrame<XYX, IntrinsicRotation>(angles_from);
-    auto frame_ZYX = ReferenceFrame<ZYX, IntrinsicRotation>(angles_to);
+    frame_XYX = evs::ReferenceFrame<evs::XYX, evs::IntrinsicRotation>(angles_from);
+    auto frame_ZYX = evs::ReferenceFrame<evs::ZYX, evs::IntrinsicRotation>(angles_to);
     result = frame_XYX.rotate_to(frame_ZYX, test_vector);
     answer = create_array(FROM_XYX_TO_ZYX_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from XYX to ZYX error");
@@ -334,8 +334,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset ZYX to offset XYX error");
 
     //  ZXZ -> YZY
-    auto frame_ZXZ = ReferenceFrame<ZXZ, IntrinsicRotation>(angles_from);
-    auto frame_YZY = ReferenceFrame<YZY, IntrinsicRotation>(angles_to);
+    auto frame_ZXZ = evs::ReferenceFrame<evs::ZXZ, evs::IntrinsicRotation>(angles_from);
+    auto frame_YZY = evs::ReferenceFrame<evs::YZY, evs::IntrinsicRotation>(angles_to);
     result = frame_ZXZ.rotate_to(frame_YZY, test_vector);
     answer = create_array(FROM_ZXZ_TO_YZY_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from ZXZ to YZY error");
@@ -363,9 +363,9 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
 
     //  extrinsic tests (only the first reference frame will be extrinsic
     //  extrinsic ZYX -> YXY
-    angles_from = EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
-    auto frame_XYZ_extrinsic = ReferenceFrame<ZYX, ExtrinsicRotation>(angles_from);
-    frame_YXY = ReferenceFrame<YXY, IntrinsicRotation>(angles_to);
+    angles_from = evs::EulerAngles(EVSPACE_PI / 3, EVSPACE_PI_4, EVSPACE_PI / 6);
+    auto frame_XYZ_extrinsic = evs::ReferenceFrame<evs::ZYX, evs::ExtrinsicRotation>(angles_from);
+    frame_YXY = evs::ReferenceFrame<evs::YXY, evs::IntrinsicRotation>(angles_to);
     result = frame_XYZ_extrinsic.rotate_to(frame_YXY, test_vector);
     answer = create_array(FROM_XYZ_TO_YXY_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from extrinsic XYZ to YXY error");
@@ -392,8 +392,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset YXY to offset extrinsic XYZ error");
 
     //  extrinsic YZX -> XYX
-    auto frame_XZY_extrinsic = ReferenceFrame<YZX, ExtrinsicRotation>(angles_from);
-    frame_XYX = ReferenceFrame<XYX, IntrinsicRotation>(angles_to);
+    auto frame_XZY_extrinsic = evs::ReferenceFrame<evs::YZX, evs::ExtrinsicRotation>(angles_from);
+    frame_XYX = evs::ReferenceFrame<evs::XYX, evs::IntrinsicRotation>(angles_to);
     result = frame_XZY_extrinsic.rotate_to(frame_XYX, test_vector);
     answer = create_array(FROM_XZY_TO_XYX_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from extrinsic XZY to XYX error");
@@ -420,8 +420,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset XYX to offset extrinsic XZY error");
 
     //  extrinsic XYX -> ZYX
-    auto frame_XYX_extrinsic = ReferenceFrame<XYX, ExtrinsicRotation>(angles_from);
-    frame_ZYX = ReferenceFrame<ZYX, IntrinsicRotation>(angles_to);
+    auto frame_XYX_extrinsic = evs::ReferenceFrame<evs::XYX, evs::ExtrinsicRotation>(angles_from);
+    frame_ZYX = evs::ReferenceFrame<evs::ZYX, evs::IntrinsicRotation>(angles_to);
     result = frame_XYX_extrinsic.rotate_to(frame_ZYX, test_vector);
     answer = create_array(FROM_XYX_TO_ZYX_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from extrinsic XYX to ZYX error");
@@ -448,8 +448,8 @@ TEST(ReferenceFrameUnitTest, TestBetweenFramesVectors) {
     _COMPARE_VECTOR_NEAR(result, test_vector, "rotate vector from offset ZYX to offset extrinsic XYX error");
 
     //  extrinsic ZXZ -> YZY
-    auto frame_ZXZ_extrinsic = ReferenceFrame<ZXZ, ExtrinsicRotation>(angles_from);
-    frame_YZY = ReferenceFrame<YZY, IntrinsicRotation>(angles_to);
+    auto frame_ZXZ_extrinsic = evs::ReferenceFrame<evs::ZXZ, evs::ExtrinsicRotation>(angles_from);
+    frame_YZY = evs::ReferenceFrame<evs::YZY, evs::IntrinsicRotation>(angles_to);
     result = frame_ZXZ_extrinsic.rotate_to(frame_YZY, test_vector);
     answer = create_array(FROM_ZXZ_TO_YZY_ROTATION);
     _COMPARE_VECTOR_NEAR(result, answer, "rotate vector from extrinsic ZXZ to YZY error");
