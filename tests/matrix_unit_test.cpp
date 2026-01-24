@@ -192,12 +192,23 @@ TEST_F(MatrixUnitTest, TestMathOperators) {
     result *= 2.0;
     _COMPARE_MATRIX_NEAR(result, answer, "Matrix scalar multiplication assignment operator error");
 
+    result = rhs;
+    result *= lhs;
+    answer = create_array({ {33, 39.6, 46.2}, {72.6, 89.1, 105.6}, {112.2, 138.6, 165} });
+    _COMPARE_MATRIX_NEAR(result, answer, "Matrix matrix multiplication assignment operator error");
+
+    result = rhs;
+    result *= result;
+    answer = create_array({ {30, 36, 42}, {66, 81, 96}, {102, 126, 150} });
+    _COMPARE_MATRIX_NEAR(result, answer, "Matrix matrix multiplication assignment operator on self error");
+
     lhs = Matrix({ {1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9} });
     result = lhs / 1.1;
     _COMPARE_MATRIX_NEAR(result, array_123, "Matrix scalar division operator error");
 
     result = Matrix({ {1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}, {7.7, 8.8, 9.9} });
     result /= 0.5;
+    answer = create_array({ {2.2, 4.4, 6.6}, {8.8, 11, 13.2}, {15.4, 17.6, 19.8} });
     _COMPARE_MATRIX_NEAR(result, answer, "Matrix scalar division assignment operator error");
 
     Vector vector = Vector(1, 2, 3);

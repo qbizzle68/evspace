@@ -136,6 +136,10 @@ TEST(VectorUnitTest, TestMathOperators) {
     result = lhs;
     result *= matrix;
     COMPARE_VECTOR(answer, result, "Matrix multiplication assignment operator error");
+
+    result = lhs;
+    result *= matrix;
+    COMPARE_VECTOR(answer, result, "Matrix multiplication assignment operator error");
 }
 
 TEST(VectorUnitTest, TestVectorComparison) {

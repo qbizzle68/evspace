@@ -453,8 +453,13 @@ namespace evspace {
     }
 
     inline Matrix& Matrix::operator*=(const Matrix& rhs) noexcept {
+        if (&rhs == this) {
+            Matrix tmp(rhs);
+            return (*this *= tmp);
+        }
+        
         double tmp[9];
-        std::memcpy(tmp, rhs.m_data, MATRIX_BYTE_SIZE);
+        std::memcpy(tmp, this->m_data, MATRIX_BYTE_SIZE);
 
         for (int i = 0; i < MATRIX_ROW_LENGTH; i++) {
             for (int j = 0; j < MATRIX_ROW_LENGTH; j++) {
