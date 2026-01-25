@@ -150,6 +150,7 @@ namespace evspace {
 
         bool operator==(const Matrix&) const noexcept;
         bool operator!=(const Matrix&) const noexcept;
+        bool compare_to(const Matrix&, std::size_t) const;
 
         double determinate() const noexcept;
         Matrix transpose() const;
@@ -493,14 +494,21 @@ namespace evspace {
         return *this;
     }
 
-    inline bool Matrix::operator==(const Matrix& rhs) const noexcept {
-        for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++) {
-            if (this->m_data[i] != rhs.m_data[i]) {
+    inline bool Matrix::compare_to(const Matrix& rhs, std::size_t max_ulps) const
+    {
+        for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++)
+        {
+            if (!_double_almost_equal(this->m_data[i], rhs.m_data[i], max_ulps))
+            {
                 return false;
             }
         }
 
         return true;
+    }
+
+    inline bool Matrix::operator==(const Matrix& rhs) const noexcept {
+        return this->compare_to(rhs, _EVSPACE_DEFAULT_ULP_MAXIMUM);
     }
 
     inline bool Matrix::operator!=(const Matrix& rhs) const noexcept {

@@ -8,10 +8,11 @@
 #include <evspace_common.hpp>
 #include <vector.hpp>
 #include <matrix.hpp>
-#include <sstream>    // std::stringstream
 #include <gtest/gtest.h>
 #include <helpers.hpp>
-#include <array>
+#include <sstream>      // std::stringstream
+#include <array>        // std::array
+#include <limits>       // numerous
 
 namespace evs = evspace;
 
@@ -148,16 +149,160 @@ TEST(VectorUnitTest, TestMathOperators) {
 }
 
 TEST(VectorUnitTest, TestVectorComparison) {
+    // test trivial values here
     evs::Vector lhs = evs::Vector(2, 4, 6);
     evs::Vector rhs = evs::Vector(1, 2, 3) / 0.5;
 
     EXPECT_TRUE(lhs == rhs) << "Equal vectors do not compare as equal";
     EXPECT_FALSE(lhs != rhs) << "Equal vectors compare as unequal";
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
 
     rhs = evs::Vector(1, 2, 3);
 
     EXPECT_TRUE(lhs != rhs) << "Unequal vectors do not compare as unequal";
     EXPECT_FALSE(lhs == rhs) << "Unequal vectors compare as equal";
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
+
+    // There are many ways we can handle these, to ensure
+    // each edge case is properly caught we will strictly
+    // test one case with trivially equal values elsewhere
+    // for each test
+    lhs = evspace::Vector(1, 2, 3);
+    rhs = lhs;
+
+    // Zero and near zero
+    lhs[0] = +0.0;
+    rhs[0] = -0.0;
+    EXPECT_TRUE(lhs == rhs) << "Vectors with +0.0, -0.0 should be equal";
+    EXPECT_FALSE(lhs != rhs) << "Vectors with +0.0, -0.0 should not be unequal";
+
+    lhs[0] = 0.0;
+    rhs[0] = advance_ulps(0.0, 1, 1.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[0] = advance_ulps(0.0, 1, -1.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    lhs[0] = advance_ulps(0.0, 1, 1.0);
+    rhs[0] = advance_ulps(0.0, 1, -1.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    lhs[0] = std::numeric_limits<double>::denorm_min();
+    rhs[0] = -std::numeric_limits<double>::denorm_min();
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    // Subnormal
+    // lhs denorm_min from above
+    rhs[0] = advance_ulps(lhs[0], 1, INFINITY);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[0] = std::numeric_limits<double>::min();
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // Around 1.0
+    lhs[0] = 1.0; rhs[0] = 1.0;
+    lhs[1] = 1.0;
+    rhs[1] = advance_ulps(1.0, 1, 2.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    // lhs = 1.0 from above
+    rhs[1] = advance_ulps(1.0, 1, 0.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    
+    rhs[1] = std::numeric_limits<double>::epsilon();
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    rhs[1] = advance_ulps(1.0, 10, 2.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[1] = advance_ulps(1.0, 11, 2.0);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    rhs[1] = advance_ulps(1.0, 10, 0.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[1] = advance_ulps(1.0, 11, 0.0);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    lhs[1] = -1.0;
+    rhs[1] = advance_ulps(-1.0, 10, 0.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[1] = advance_ulps(-1.0, 11, 0.0);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // medium magnitude
+    lhs[1] = 2.0; rhs[1] = 2.0;
+    lhs[2] = 1e6;
+    rhs[2] = advance_ulps(1e6, 10, +INFINITY);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[2] = advance_ulps(1e6, 11, +INFINITY);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    rhs[2] = 1e6 + 1;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // large magnitude
+    lhs[2] = 1e200;
+    rhs[2] = advance_ulps(1e200, 10, +INFINITY);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[2] = advance_ulps(1e200, 11, +INFINITY);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // extreme magnitude
+    lhs[2] = std::numeric_limits<double>::max();
+    rhs[2] = advance_ulps(std::numeric_limits<double>::max(), 1, 0.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[2] = advance_ulps(std::numeric_limits<double>::max(), 1, +INFINITY);
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // infinities and NaNs
+    lhs[2] = +INFINITY;
+    rhs[2] = +INFINITY;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    rhs[2] = -INFINITY;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    lhs[2] = 3.0;
+    rhs[2] = std::numeric_limits<double>::quiet_NaN();
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // compare_to tests
+    rhs[2] = advance_ulps(3.0, 20, 4.0);
+    EXPECT_TRUE(lhs.compare_to(rhs, 20));
+    EXPECT_FALSE(lhs.compare_to(rhs, 19));
+
+    rhs[2] = advance_ulps(3.0, 1, 4.0);
+    EXPECT_FALSE(lhs.compare_to(rhs, 0));
 }
 
 TEST(VectorUnitTest, TestVectorOperators) {

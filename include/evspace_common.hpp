@@ -22,6 +22,8 @@ using span_t = gsl::span<T>;
 #define EVSPACE_USING_GSL_SPAN
 #endif // _EVSPACE_COMMON_H_
 
+#define _EVSPACE_DEFAULT_ULP_MAXIMUM 10
+
 }
 
 #endif // _EVSPACE_COMMON_H_

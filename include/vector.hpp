@@ -7,6 +7,7 @@
 #include <cmath>        // std::sqrt, std::acos
 #include <evspace_common.hpp>
 #include <comma_operator.hpp>
+#include <compare.hpp>
 
 // forward declaration for global friend function signature (below function)
 namespace evspace { class Vector; }
@@ -92,6 +93,10 @@ namespace evspace {
 
         bool operator==(const Vector&) const;
         bool operator!=(const Vector&) const;
+        // Compare two Vectors while specifying the maximum number
+        // of ULPs that two components can differ but still be
+        // considered equal.
+        bool compare_to(const Vector&, std::size_t) const;
 
         // Computes the length of the Vector. This is roughly equivalent to
         // std::sqrt(vector.magnitude_squared());
@@ -317,12 +322,17 @@ namespace evspace {
         return *this;
     }
 
-    inline bool Vector::operator==(const Vector& rhs) const {
+    inline bool Vector::compare_to(const Vector& rhs, std::size_t max_ulps) const
+    {
         return (
-            VECTOR_X(*this) == VECTOR_X(rhs) &&
-            VECTOR_Y(*this) == VECTOR_Y(rhs) &&
-            VECTOR_Z(*this) == VECTOR_Z(rhs)
+            _double_almost_equal(VECTOR_X(*this), VECTOR_X(rhs), max_ulps) &&
+            _double_almost_equal(VECTOR_Y(*this), VECTOR_Y(rhs), max_ulps) &&
+            _double_almost_equal(VECTOR_Z(*this), VECTOR_Z(rhs), max_ulps)
         );
+    }
+
+    inline bool Vector::operator==(const Vector& rhs) const {
+        return this->compare_to(rhs, _EVSPACE_DEFAULT_ULP_MAXIMUM);
     }
 
     inline bool Vector::operator!=(const Vector& rhs) const {

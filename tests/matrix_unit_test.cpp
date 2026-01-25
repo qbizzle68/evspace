@@ -250,14 +250,27 @@ TEST_F(MatrixUnitTest, TestMathOperators) {
 }
 
 TEST_F(MatrixUnitTest, TestMatrixComparison) {
+    // Vector tests the _double_almost_equal() extensively, so we only need to
+    // handle a few cases here that ensure that function is being called
+
     lhs = evs::Matrix(array_123);
     rhs = evs::Matrix(array_123) * 2.0;
     evs::Matrix lhs_copy = lhs;
 
     EXPECT_TRUE(lhs == lhs_copy) << "Equality operator on equal matrices error";
-    EXPECT_FALSE(lhs == rhs) << "Equality operator on unequal matrices error";
-    EXPECT_TRUE(lhs != rhs) << "Unequality operator on unequal matrices error";
     EXPECT_FALSE(lhs != lhs_copy) << "Unequality operator on equal matrices error";
+    EXPECT_TRUE(lhs.compare_to(lhs_copy, 10));
+    EXPECT_TRUE(lhs != rhs) << "Unequality operator on unequal matrices error";
+    EXPECT_FALSE(lhs == rhs) << "Equality operator on unequal matrices error";
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
+
+    lhs_copy(1, 1) = advance_ulps(5.0, 10, 6.0);
+    EXPECT_TRUE(lhs == lhs_copy);
+    EXPECT_FALSE(lhs != lhs_copy);
+    
+    lhs_copy(1, 1) = advance_ulps(5.0, 20, 6.0);
+    EXPECT_TRUE(lhs.compare_to(lhs_copy, 20));
+    EXPECT_FALSE(lhs.compare_to(lhs_copy, 19));
 }
 
 TEST_F(MatrixUnitTest, TestMatrixOperators) {

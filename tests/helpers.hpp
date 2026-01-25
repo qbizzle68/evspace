@@ -85,4 +85,13 @@ inline MatrixArray create_array(double value) {
     return MatrixArray{ row, row, row };
 }
 
+// Creates a double whose representation is `n` ULPs after `x`
+inline double advance_ulps(double x, int n, double direction) {
+    for (int i = 0; i < n; i++) {
+        x = std::nextafter<double>(x, direction);
+    }
+
+    return x;
+}
+
 #endif // _EVSPACE_PCH_H_
