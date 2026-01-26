@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <stdexcept>
-#include <iostream>
 
 namespace evspace {
 

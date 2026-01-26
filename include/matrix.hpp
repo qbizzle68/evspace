@@ -8,7 +8,6 @@
 #include <cstring>      // std::memcpy
 #include <stdexcept>    // std::out_of_range
 #include <iterator>     // std::data
-#include <algorithm>    // std::copy
 #include <ostream>      // std::ostream
 #include <type_traits>
 

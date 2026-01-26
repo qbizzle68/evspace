@@ -5,8 +5,6 @@
 #include <cstdint>      // int64_t
 #include <cstring>      // std::memcpy
 
-#include <iostream>
-
 namespace evspace
 {
     
