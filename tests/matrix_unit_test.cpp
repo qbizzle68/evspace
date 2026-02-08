@@ -264,10 +264,31 @@ TEST_F(MatrixUnitTest, TestMatrixComparison) {
     EXPECT_FALSE(lhs == rhs) << "Equality operator on unequal matrices error";
     EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
-    lhs_copy(1, 1) = advance_ulps(5.0, 10, 6.0);
+    double pi = std::acos(-1.0);
+    lhs_copy(1, 1) = std::sin(pi / 4.0);
+    lhs(1, 1) = std::cos(pi / 4.0);
     EXPECT_TRUE(lhs == lhs_copy);
     EXPECT_FALSE(lhs != lhs_copy);
+
+    lhs(0, 0) = 1.0;
+    lhs_copy(0, 0) = 1.0 + 0.99e-9;
+    EXPECT_TRUE(lhs == lhs_copy);
+    EXPECT_FALSE(lhs != lhs_copy);
+    lhs_copy(0, 0) = 1.0 + 1.01e-9;
+    EXPECT_FALSE(lhs == lhs_copy);
+    EXPECT_TRUE(lhs != lhs_copy);
+    lhs(0, 0) = 0.0;
+    lhs_copy(0, 0) = 0.99e-15;
+    EXPECT_TRUE(lhs == lhs_copy);
+    EXPECT_FALSE(lhs != lhs_copy);
+    lhs_copy(0, 0) = 1.01e-15;
+    EXPECT_FALSE(lhs == lhs_copy);
+    EXPECT_TRUE(lhs != lhs_copy);
+    EXPECT_TRUE(lhs.compare_to(lhs_copy, 1e-9, 9.99e-14));
     
+    lhs(0, 0) = 1.0;
+    lhs(1, 1) = 5.0;
+    lhs_copy(0, 0) = 1.0;
     lhs_copy(1, 1) = advance_ulps(5.0, 20, 6.0);
     EXPECT_TRUE(lhs.compare_to(lhs_copy, 20));
     EXPECT_FALSE(lhs.compare_to(lhs_copy, 19));

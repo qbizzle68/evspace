@@ -7,6 +7,9 @@
 
 namespace evspace
 {
+
+static constexpr double DEFAULT_REL_TOL = 1e-9;
+static constexpr double DEFAULT_ABS_TOL = 1e-15;
     
 // Casts the IEEE 754 representation of a 64-bit double
 // to it's bit representation in a uint64_t and then
@@ -51,6 +54,29 @@ _double_almost_equal(double a, double b, std::size_t max_ulps = 10)
     std::uint64_t b_int = _ordered_cast_u64(b);
     
     return (a_int < b_int ? b_int - a_int : a_int - b_int) <= max_ulps;
+}
+
+// Tolerance based comparison of two double values. Combines
+// absolute and relative errors for a smooth transition between
+// absolute dominate and relative dominate error regimes.
+inline bool
+_double_almost_equal(double a, double b, double rel_tol, double abs_tol)
+{
+    if (a == b) {
+        return true;
+    }
+
+    if (!std::isfinite(a) || !std::isfinite(b)) {
+        return false;
+    }
+
+    if (std::isnan(a) || std::isnan(b)) {
+        return false;
+    }
+
+    double diff = std::fabs(a - b);
+
+    return diff <= abs_tol + rel_tol * std::max(std::abs(a), std::abs(b));
 }
     
 }

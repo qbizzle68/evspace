@@ -147,9 +147,19 @@ namespace evspace {
         Matrix operator/(double) const;
         Matrix& operator/=(double) noexcept;
 
+        // Compare two Matrix objects using tolerance based
+        // comparison on respective element. For checking precise
+        // equivalence see `compare_to()` overload with ULP based
+        // comparison mechanics.
         bool operator==(const Matrix&) const noexcept;
         bool operator!=(const Matrix&) const noexcept;
+        // Compare two Matrix objects while specifying the maximum
+        // number of ULPs that two components can differ but still
+        // be considered equal.
         bool compare_to(const Matrix&, std::size_t) const;
+        // Compare two Matrix objects while specifying relative and
+        // absolute tolerance errors.
+        bool compare_to(const Matrix&, double rel_tol, double abs_tol) const;
 
         double determinate() const noexcept;
         Matrix transpose() const;
@@ -506,8 +516,22 @@ namespace evspace {
         return true;
     }
 
+    inline bool
+    Matrix::compare_to(const Matrix& rhs, double rel_tol, double abs_tol) const
+    {
+        for (int i = 0; i < MATRIX_ARRAY_LENGTH; i++)
+        {
+            if (!_double_almost_equal(this->m_data[i], rhs.m_data[i], rel_tol, abs_tol))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     inline bool Matrix::operator==(const Matrix& rhs) const noexcept {
-        return this->compare_to(rhs, _EVSPACE_DEFAULT_ULP_MAXIMUM);
+        return this->compare_to(rhs, DEFAULT_REL_TOL, DEFAULT_ABS_TOL);
     }
 
     inline bool Matrix::operator!=(const Matrix& rhs) const noexcept {

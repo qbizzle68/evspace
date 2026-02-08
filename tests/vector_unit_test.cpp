@@ -148,19 +148,202 @@ TEST(VectorUnitTest, TestMathOperators) {
     COMPARE_VECTOR(answer, result, "Matrix multiplication assignment operator error");
 }
 
-TEST(VectorUnitTest, TestVectorComparison) {
+TEST(VectorUnitTest, TestVectorTolComparison) {
+    evs::Vector lhs = evs::Vector(1, 2, 3);
+    evs::Vector rhs = lhs;
+
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1e-9, 1e-15));
+
+    rhs[0] = 1.0 + 1e-10;
+    EXPECT_TRUE(lhs == rhs);
+    rhs[0] = 1.1;
+    EXPECT_FALSE(lhs == rhs);
+
+    // near-zero behavior
+    lhs[0] = 0.0;
+    rhs[0] = 1e-15;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = 1e-16;
+    rhs[0] = 2e-16;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = -1e-16;
+    rhs[0] = 1e-16;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    lhs[0] = 0.0;
+    rhs[0] = 1e-14;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, evspace::DEFAULT_REL_TOL, 1e-14));
+
+    // large mangnitude behavior
+    lhs[0] = rhs[0] = 1.0;
+    lhs[1] = 1e10;
+    rhs[1] = 1e10 + 1.0;    // relative error ~1e-10
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[1] = 1e20;
+    rhs[1] = 1e20 * 1.0000000001; // relative rror ~1e-10
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 1e-10, 1e-15));
+
+    lhs[1] = 1e10;
+    rhs[1] = 1e10 + 100;    // relative error ~ 1e-8
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1e-8, 1e-15));
+    lhs[1] = 1e15;
+    rhs[1] = 1e15 * 1.000001;   // relative error ~1e-5
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1e-5, 1e-15));
+
+    // different magnitude scales (testing the sum formulation)
+    lhs[1] = rhs[1] = 2.0;
+    lhs[2] = 1.0;
+    rhs[2] = 1.0 + 1e-10;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[2] = 1e-5;
+    rhs[2] = 1e-5 + 1e-15;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[2] = 1.0;
+    rhs[2] = 2.0;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    lhs[2] = 1e6;
+    rhs[2] = 2e6;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    // sign handling
+    lhs[2] = rhs[2] = 3.0;
+    lhs[0] = 1.0;
+    rhs[0] = -1.0;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    lhs[0] = 1e-10;
+    rhs[0] = -1e-10;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    lhs[0] = 0.0;
+    rhs[0] = -0.0;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = -1.0;
+    rhs[0] = -1.0 - 1e-10;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = -1e10;
+    rhs[0] = -1e10 - 1.0;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    // transition region (where abs and rel tolerances are similar)
+    // for abs_tol = 1e-15 and rel_tol=1e-9 this is around 1e-6
+    double transition = 1e-6;
+    lhs[0] = transition;
+    rhs[0] = transition + 1e-15;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    rhs[0] = transition + 1e-16;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    
+    transition = 1e-6;
+    lhs[0] = transition;
+    rhs[0] = transition + 1e-10;
+    EXPECT_TRUE(lhs.compare_to(rhs, 1e-5, 1e-10));
+
+    // scientific computing cases
+    double pi = std::acos(-1.0);
+    lhs[0] = std::sin(pi / 4.0);
+    rhs[0] = std::cos(pi / 4.0);
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = std::sin(pi / 6.0);
+    rhs[0] = 0.5;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    lhs[0] = std::pow(std::sin(pi / 3.0), 2) + std::pow(std::cos(pi / 3.0), 2);
+    rhs[0] = 1.0;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    // special values
+    lhs[0] = +INFINITY;
+    rhs[0] = +INFINITY;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    rhs[0] = -INFINITY;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    rhs[0] = 1e+308;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    lhs[0] = 1.0;
+    rhs[0] = +INFINITY;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    double nan = std::numeric_limits<double>::quiet_NaN();
+    lhs[0] = nan;
+    rhs[0] = nan;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 0.0, 0.0));
+    rhs[0] = 0.0;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+
+    double denorm = std::numeric_limits<double>::denorm_min();
+    lhs[0] = denorm;
+    rhs[0] = 2.0 * denorm;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+
+    // boundary testing (just outside tolerance)
+    lhs[0] = 1.0;
+    rhs[0] = 1.0 + 0.99e-9;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    rhs[0] = 1.0 + 1.01e-9;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    lhs[0] = 0.0;
+    rhs[0] = 0.99e-15;
+    EXPECT_TRUE(lhs == rhs);
+    EXPECT_FALSE(lhs != rhs);
+    rhs[0] = 1.01e-15;
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1e-9, 9.99e-14));
+
+    // non-transitivity demonstration
+    // this behaves as expected, not an error. mostly for showing it
+    // does exist: might have a==b and b==c but not a==c
+    lhs[0] = 0.0;
+    rhs[0] = 5e-16;
+    EXPECT_TRUE(lhs == rhs);
+    lhs[0] = 1.01e-15;
+    EXPECT_TRUE(lhs == rhs);
+    rhs[0] = 0.0;
+    EXPECT_FALSE(lhs == rhs);
+}
+
+TEST(VectorUnitTest, TestVectorUlpComparison) {
     // test trivial values here
     evs::Vector lhs = evs::Vector(2, 4, 6);
     evs::Vector rhs = evs::Vector(1, 2, 3) / 0.5;
-
-    EXPECT_TRUE(lhs == rhs) << "Equal vectors do not compare as equal";
-    EXPECT_FALSE(lhs != rhs) << "Equal vectors compare as unequal";
     EXPECT_TRUE(lhs.compare_to(rhs, 10));
 
     rhs = evs::Vector(1, 2, 3);
-
-    EXPECT_TRUE(lhs != rhs) << "Unequal vectors do not compare as unequal";
-    EXPECT_FALSE(lhs == rhs) << "Unequal vectors compare as equal";
     EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     // There are many ways we can handle these, to ensure
@@ -173,134 +356,98 @@ TEST(VectorUnitTest, TestVectorComparison) {
     // Zero and near zero
     lhs[0] = +0.0;
     rhs[0] = -0.0;
-    EXPECT_TRUE(lhs == rhs) << "Vectors with +0.0, -0.0 should be equal";
-    EXPECT_FALSE(lhs != rhs) << "Vectors with +0.0, -0.0 should not be unequal";
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
 
     lhs[0] = 0.0;
     rhs[0] = advance_ulps(0.0, 1, 1.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1));
 
     rhs[0] = advance_ulps(0.0, 1, -1.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 2));
 
     lhs[0] = advance_ulps(0.0, 1, 1.0);
     rhs[0] = advance_ulps(0.0, 1, -1.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 3));
 
     lhs[0] = std::numeric_limits<double>::denorm_min();
     rhs[0] = -std::numeric_limits<double>::denorm_min();
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 3));
 
     // Subnormal
     // lhs denorm_min from above
     rhs[0] = advance_ulps(lhs[0], 1, INFINITY);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 2));
 
     rhs[0] = std::numeric_limits<double>::min();
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     // Around 1.0
     lhs[0] = 1.0; rhs[0] = 1.0;
     lhs[1] = 1.0;
     rhs[1] = advance_ulps(1.0, 1, 2.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1));
 
     // lhs = 1.0 from above
     rhs[1] = advance_ulps(1.0, 1, 0.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1));
     
     rhs[1] = std::numeric_limits<double>::epsilon();
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     rhs[1] = advance_ulps(1.0, 10, 2.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
-
-    rhs[1] = advance_ulps(1.0, 11, 2.0);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
+    EXPECT_FALSE(lhs.compare_to(rhs, 9));
 
     rhs[1] = advance_ulps(1.0, 10, 0.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
-
-    rhs[1] = advance_ulps(1.0, 11, 0.0);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
+    EXPECT_FALSE(lhs.compare_to(rhs, 9));
 
     lhs[1] = -1.0;
     rhs[1] = advance_ulps(-1.0, 10, 0.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
-
-    rhs[1] = advance_ulps(-1.0, 11, 0.0);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
+    EXPECT_FALSE(lhs.compare_to(rhs, 9));
 
     // medium magnitude
     lhs[1] = 2.0; rhs[1] = 2.0;
     lhs[2] = 1e6;
     rhs[2] = advance_ulps(1e6, 10, +INFINITY);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
+    EXPECT_FALSE(lhs.compare_to(rhs, 9));
 
     rhs[2] = advance_ulps(1e6, 11, +INFINITY);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 11));
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     rhs[2] = 1e6 + 1;
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     // large magnitude
     lhs[2] = 1e200;
     rhs[2] = advance_ulps(1e200, 10, +INFINITY);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
-
-    rhs[2] = advance_ulps(1e200, 11, +INFINITY);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 10));
+    EXPECT_FALSE(lhs.compare_to(rhs, 9));
 
     // extreme magnitude
     lhs[2] = std::numeric_limits<double>::max();
     rhs[2] = advance_ulps(std::numeric_limits<double>::max(), 1, 0.0);
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1));
 
     rhs[2] = advance_ulps(std::numeric_limits<double>::max(), 1, +INFINITY);
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     // infinities and NaNs
     lhs[2] = +INFINITY;
     rhs[2] = +INFINITY;
-    EXPECT_TRUE(lhs == rhs);
-    EXPECT_FALSE(lhs != rhs);
+    EXPECT_TRUE(lhs.compare_to(rhs, 1));
 
     rhs[2] = -INFINITY;
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 10));
 
     lhs[2] = 3.0;
     rhs[2] = std::numeric_limits<double>::quiet_NaN();
-    EXPECT_FALSE(lhs == rhs);
-    EXPECT_TRUE(lhs != rhs);
+    EXPECT_FALSE(lhs.compare_to(rhs, 1000));
 
-    // compare_to tests
-    rhs[2] = advance_ulps(3.0, 20, 4.0);
-    EXPECT_TRUE(lhs.compare_to(rhs, 20));
-    EXPECT_FALSE(lhs.compare_to(rhs, 19));
-
+    // Check exact
     rhs[2] = advance_ulps(3.0, 1, 4.0);
     EXPECT_FALSE(lhs.compare_to(rhs, 0));
 }

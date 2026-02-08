@@ -91,12 +91,19 @@ namespace evspace {
         Vector operator/(double) const;
         Vector& operator/=(double);
 
+        // Compare two Vector objects using tolerance based
+        // comparison on respective element. For checking precise
+        // equivalence see `compare_to()` overload with ULP based
+        // comparison mechanics.
         bool operator==(const Vector&) const;
         bool operator!=(const Vector&) const;
         // Compare two Vectors while specifying the maximum number
         // of ULPs that two components can differ but still be
         // considered equal.
         bool compare_to(const Vector&, std::size_t) const;
+        // Compare two Vectors while specifying relative and
+        // absolute tolerance errors.
+        bool compare_to(const Vector&, double rel_tol, double abs_tol) const;
 
         // Computes the length of the Vector. This is roughly equivalent to
         // std::sqrt(vector.magnitude_squared());
@@ -331,8 +338,17 @@ namespace evspace {
         );
     }
 
+    inline bool Vector::compare_to(const Vector& rhs, double rel_tol, double abs_tol) const
+    {
+        return (
+            _double_almost_equal(VECTOR_X(*this), VECTOR_X(rhs), rel_tol, abs_tol) &&
+            _double_almost_equal(VECTOR_Y(*this), VECTOR_Y(rhs), rel_tol, abs_tol) &&
+            _double_almost_equal(VECTOR_Z(*this), VECTOR_Z(rhs), rel_tol, abs_tol)
+        );
+    }
+
     inline bool Vector::operator==(const Vector& rhs) const {
-        return this->compare_to(rhs, _EVSPACE_DEFAULT_ULP_MAXIMUM);
+        return this->compare_to(rhs, DEFAULT_REL_TOL, DEFAULT_ABS_TOL);
     }
 
     inline bool Vector::operator!=(const Vector& rhs) const {
